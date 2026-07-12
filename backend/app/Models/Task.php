@@ -3,48 +3,55 @@
 namespace App\Models;
 
 use App\Enums\Priority;
-use App\Enums\ProjectStatus;
+use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Project extends Model
+class Task extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'project_key',
+        'project_id',
+        'task_number',
+        'title',
         'description',
-        'manager_id',
         'status',
         'priority',
-        'start_date',
-        'due_date',
-        'completed_at',
+        'assigned_to',
         'created_by',
+        'due_date',
+        'started_at',
+        'completed_at',
+        'estimated_hours',
     ];
 
     protected function casts(): array
     {
         return [
-            'status' => ProjectStatus::class,
+            'status' => TaskStatus::class,
             'priority' => Priority::class,
-            'start_date' => 'date',
             'due_date' => 'date',
+            'started_at' => 'datetime',
             'completed_at' => 'datetime',
+            'estimated_hours' => 'decimal:2',
         ];
     }
 
-    public function manager(): BelongsTo
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function assignee(): BelongsTo
     {
         return $this->belongsTo(
             User::class,
-            'manager_id'
+            'assigned_to'
         );
     }
 
@@ -56,20 +63,18 @@ class Project extends Model
         );
     }
 
-    public function members(): BelongsToMany
+    public function comments(): HasMany
     {
-        return $this->belongsToMany(User::class)
-            ->withPivot('joined_at')
-            ->withTimestamps();
-    }
-
-    public function tasks(): HasMany
-    {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(TaskComment::class);
     }
 
     public function activityLogs(): HasMany
     {
         return $this->hasMany(ActivityLog::class);
+    }
+
+    public function getReferenceAttribute(): string
+    {
+        return "{$this->project->project_key}-{$this->task_number}";
     }
 }

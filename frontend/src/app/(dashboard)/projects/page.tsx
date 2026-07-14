@@ -133,30 +133,42 @@ export default function ProjectsPage() {
           value={status}
           onValueChange={(value) => {
             setStatus(
-              (value ?? "all") as
-              | ProjectStatus
-              | "all"
+              (value ?? "all") as ProjectStatus | "all"
             );
             setPage(1);
           }}
         >
-          <SelectTrigger>
-            <SelectValue placeholder="All statuses" />
+          <SelectTrigger className="w-full">
+            <SelectValue>
+              {status === "all"
+                ? "All statuses"
+                : status === "planning"
+                  ? "Planning"
+                  : status === "active"
+                    ? "Active"
+                    : status === "on_hold"
+                      ? "On Hold"
+                      : "Completed"}
+            </SelectValue>
           </SelectTrigger>
 
           <SelectContent>
             <SelectItem value="all">
               All statuses
             </SelectItem>
+
             <SelectItem value="planning">
               Planning
             </SelectItem>
+
             <SelectItem value="active">
               Active
             </SelectItem>
+
             <SelectItem value="on_hold">
               On Hold
             </SelectItem>
+
             <SelectItem value="completed">
               Completed
             </SelectItem>
@@ -167,30 +179,42 @@ export default function ProjectsPage() {
           value={priority}
           onValueChange={(value) => {
             setPriority(
-              (value ?? "all") as
-              | ProjectPriority
-              | "all"
+              (value ?? "all") as ProjectPriority | "all"
             );
             setPage(1);
           }}
         >
-          <SelectTrigger>
-            <SelectValue placeholder="All priorities" />
+          <SelectTrigger className="w-full">
+            <SelectValue>
+              {priority === "all"
+                ? "All priorities"
+                : priority === "low"
+                  ? "Low"
+                  : priority === "medium"
+                    ? "Medium"
+                    : priority === "high"
+                      ? "High"
+                      : "Critical"}
+            </SelectValue>
           </SelectTrigger>
 
           <SelectContent>
             <SelectItem value="all">
               All priorities
             </SelectItem>
+
             <SelectItem value="low">
               Low
             </SelectItem>
+
             <SelectItem value="medium">
               Medium
             </SelectItem>
+
             <SelectItem value="high">
               High
             </SelectItem>
+
             <SelectItem value="critical">
               Critical
             </SelectItem>

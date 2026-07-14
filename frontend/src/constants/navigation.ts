@@ -2,6 +2,7 @@ import {
   FolderKanban,
   LayoutDashboard,
   ListTodo,
+  Trash2,
   Users,
 } from "lucide-react";
 
@@ -44,4 +45,10 @@ export const navigationItems: NavigationItem[] = [
     icon: Users,
     permission: "users.view",
   },
+  {
+  title: "Project Trash",
+  href: "/projects/trash",
+  icon: Trash2,
+  permission: "projects.restore",
+},
 ];

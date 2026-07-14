@@ -160,9 +160,6 @@ export default function ProjectsPage() {
             <SelectItem value="completed">
               Completed
             </SelectItem>
-            <SelectItem value="archived">
-              Archived
-            </SelectItem>
           </SelectContent>
         </Select>
 
@@ -224,11 +221,12 @@ export default function ProjectsPage() {
             {projectsQuery.data.data.map(
               (project) => (
                 <ProjectCard
+                  key={project.id}
                   project={project}
                   onEdit={openEdit}
-                  onArchive={openDelete}
+                  onDelete={openDelete}
                   canUpdate={canUpdate}
-                  canArchive={canDelete}
+                  canDelete={canDelete}
                 />
               )
             )}

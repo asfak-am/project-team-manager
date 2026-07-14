@@ -118,10 +118,17 @@ export function useDeleteProject() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (
-      projectId: number
-    ) =>
-      projectService.deleteProject(projectId),
+    mutationFn: ({
+      projectId,
+      permanent,
+    }: {
+      projectId: number;
+      permanent: boolean;
+    }) =>
+      projectService.deleteProject(
+        projectId,
+        permanent
+      ),
 
     onSuccess: async () => {
       await Promise.all([
@@ -129,9 +136,71 @@ export function useDeleteProject() {
           queryKey: projectKeys.all,
         }),
         queryClient.invalidateQueries({
+          queryKey: ["trashed-projects"],
+        }),
+        queryClient.invalidateQueries({
           queryKey: ["dashboard"],
         }),
       ]);
+    },
+  });
+}
+
+export function useTrashedProjects(
+  filters: {
+    search?: string;
+    page?: number;
+    per_page?: number;
+  }
+) {
+  return useQuery({
+    queryKey: [
+      "trashed-projects",
+      filters,
+    ],
+    queryFn: () =>
+      projectService.getTrashedProjects(
+        filters
+      ),
+  });
+}
+
+export function useRestoreProject() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (projectId: number) =>
+      projectService.restoreProject(projectId),
+
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: projectKeys.all,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["trashed-projects"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["dashboard"],
+        }),
+      ]);
+    },
+  });
+}
+
+export function useForceDeleteProject() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (projectId: number) =>
+      projectService.forceDeleteProject(
+        projectId
+      ),
+
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["trashed-projects"],
+      });
     },
   });
 }

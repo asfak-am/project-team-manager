@@ -27,6 +27,8 @@ class RolePermissionSeeder extends Seeder
             'projects.update',
             'projects.delete',
             'projects.manage-members',
+            'projects.restore',
+            'projects.force-delete',
 
             'tasks.view-all',
             'tasks.view-assigned',

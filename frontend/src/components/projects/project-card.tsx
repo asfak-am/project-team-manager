@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  Archive,
   CalendarDays,
   MoreHorizontal,
   Pencil,
+  Trash2,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -35,17 +35,17 @@ import type { Project } from "@/types/project";
 type ProjectCardProps = {
   project: Project;
   onEdit: (project: Project) => void;
-  onArchive: (project: Project) => void;
+  onDelete: (project: Project) => void;
   canUpdate: boolean;
-  canArchive: boolean;
+  canDelete: boolean;
 };
 
 export function ProjectCard({
   project,
   onEdit,
-  onArchive,
+  onDelete,
   canUpdate,
-  canArchive,
+  canDelete,
 }: ProjectCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -62,9 +62,9 @@ export function ProjectCard({
     onEdit(project);
   }
 
-  function handleArchive(): void {
+  function handleDelete(): void {
     setMenuOpen(false);
-    onArchive(project);
+    onDelete(project);
   }
 
   return (
@@ -98,7 +98,7 @@ export function ProjectCard({
             </Link>
           </div>
 
-          {(canUpdate || canArchive) && (
+          {(canUpdate || canDelete) && (
             <DropdownMenu
               open={menuOpen}
               onOpenChange={setMenuOpen}
@@ -127,13 +127,13 @@ export function ProjectCard({
                   </DropdownMenuItem>
                 )}
 
-                {canArchive && (
+                {canDelete && (
                   <DropdownMenuItem
                     className="text-destructive"
-                    onClick={handleArchive}
+                    onClick={handleDelete}
                   >
-                    <Archive className="size-4" />
-                    Archive project
+                    <Trash2 className="size-4" />
+                    Delete project
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
@@ -190,6 +190,7 @@ export function ProjectCard({
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
           <span className="flex items-center gap-2">
             <Users className="size-4" />
+
             {memberCount}{" "}
             {memberCount === 1
               ? "member"

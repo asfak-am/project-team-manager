@@ -88,15 +88,72 @@ export const projectService = {
   },
 
   async deleteProject(
-    projectId: number
-  ): Promise<ApiResponse<null>> {
-    const response =
-      await apiClient.delete<ApiResponse<null>>(
-        `/api/projects/${projectId}`
-      );
+  projectId: number,
+  permanent: boolean
+): Promise<ApiResponse<null>> {
+  const response =
+    await apiClient.delete<ApiResponse<null>>(
+      `/api/projects/${projectId}`,
+      {
+        data: {
+          permanent,
+        },
+      }
+    );
 
-    return response.data;
-  },
+  return response.data;
+},
+
+async getTrashedProjects(
+  filters: {
+    search?: string;
+    page?: number;
+    per_page?: number;
+  }
+): Promise<PaginatedResponse<Project>> {
+  const params = new URLSearchParams();
+
+  if (filters.search) {
+    params.set("search", filters.search);
+  }
+
+  params.set("page", String(filters.page ?? 1));
+  params.set(
+    "per_page",
+    String(filters.per_page ?? 10)
+  );
+
+  const response =
+    await apiClient.get<
+      PaginatedResponse<Project>
+    >(
+      `/api/trashed-projects?${params.toString()}`
+    );
+
+  return response.data;
+},
+
+async restoreProject(
+  projectId: number
+): Promise<ApiResponse<Project>> {
+  const response =
+    await apiClient.patch<ApiResponse<Project>>(
+      `/api/trashed-projects/${projectId}/restore`
+    );
+
+  return response.data;
+},
+
+async forceDeleteProject(
+  projectId: number
+): Promise<ApiResponse<null>> {
+  const response =
+    await apiClient.delete<ApiResponse<null>>(
+      `/api/trashed-projects/${projectId}/force`
+    );
+
+  return response.data;
+},
 
   async getMembers(
     projectId: number

@@ -58,6 +58,26 @@ class ProjectPolicy
             && $project->manager_id === $user->id;
     }
 
+    public function viewTrash(User $user): bool
+    {
+        return $user->can('projects.restore')
+            || $user->can('projects.force-delete');
+    }
+
+    public function restore(
+        User $user,
+        Project $project
+    ): bool {
+        return $user->can('projects.restore');
+    }
+
+    public function forceDelete(
+        User $user,
+        Project $project
+    ): bool {
+        return $user->can('projects.force-delete');
+    }
+
     public function manageMembers(
         User $user,
         Project $project

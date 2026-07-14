@@ -124,6 +124,31 @@ Route::middleware('auth:sanctum')->group(function () {
     ])->middleware('permission:projects.delete');
 
     /*
+|--------------------------------------------------------------------------
+| Project Trash
+|--------------------------------------------------------------------------
+*/
+
+    Route::get('/trashed-projects', [
+        ProjectController::class,
+        'trashed',
+    ])->middleware('permission:projects.restore');
+
+    Route::patch('/trashed-projects/{project}/restore', [
+        ProjectController::class,
+        'restore',
+    ])
+        ->middleware('permission:projects.restore')
+        ->withTrashed();
+
+    Route::delete('/trashed-projects/{project}/force', [
+        ProjectController::class,
+        'forceDelete',
+    ])
+        ->middleware('permission:projects.force-delete')
+        ->withTrashed();
+
+    /*
     |--------------------------------------------------------------------------
     | Project members
     |--------------------------------------------------------------------------

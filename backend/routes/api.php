@@ -15,12 +15,10 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('guest')->group(function () {
-    Route::post('/login', [
-        AuthController::class,
-        'login',
-    ])->name('api.login');
-});
+Route::post('/login', [
+    AuthController::class,
+    'login',
+]);
 
 /*
 |--------------------------------------------------------------------------

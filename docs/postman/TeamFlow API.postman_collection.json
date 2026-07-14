@@ -1,0 +1,1501 @@
+{
+  "info": {
+    "_postman_id": "68b4a9e3-f2e1-4731-a00d-383a64ba255c",
+    "name": "TeamFlow API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49160723",
+    "_collection_link": "https://go.postman.co/collection/49160723-68b4a9e3-f2e1-4731-a00d-383a64ba255c?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Get CSRF Cookie",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const setCookieHeaders = pm.response.headers\r",
+                  "    .all()\r",
+                  "    .filter(header => header.key.toLowerCase() === \"set-cookie\");\r",
+                  "\r",
+                  "let xsrfToken = null;\r",
+                  "\r",
+                  "for (const header of setCookieHeaders) {\r",
+                  "    const match = header.value.match(/XSRF-TOKEN=([^;]+)/);\r",
+                  "\r",
+                  "    if (match) {\r",
+                  "        xsrfToken = decodeURIComponent(match[1]);\r",
+                  "        break;\r",
+                  "    }\r",
+                  "}\r",
+                  "\r",
+                  "if (!xsrfToken) {\r",
+                  "    throw new Error(\"XSRF-TOKEN was not found in the response headers.\");\r",
+                  "}\r",
+                  "\r",
+                  "pm.collectionVariables.set(\"csrf_token\", xsrfToken);\r",
+                  "\r",
+                  "console.log(\"CSRF token stored successfully.\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sanctum/csrf-cookie",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "sanctum",
+                "csrf-cookie"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"admin@teamflow.test\",\r\n    \"password\": \"your_password\",\r\n    \"remember\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Authenticated User",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/user",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/logout?",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "logout"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": null,
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Dashboard Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost/3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost/3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost/3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost/3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "active",
+                  "disabled": true
+                },
+                {
+                  "key": "role",
+                  "value": "administrator",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "10",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();\r",
+                  "\r",
+                  "if (json.data?.id) {\r",
+                  "    pm.collectionVariables.set(\"user_id\", json.data.id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Nimal Perera\",\r\n    \"email\": \"nimal@example.com\",\r\n    \"password\": \"your_password\",\r\n    \"password_confirmation\": \"your_password\",\r\n    \"status\": \"active\",\r\n    \"role\": \"team-member\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Nimal Silva\",\r\n    \"email\": \"nimal.silva@example.com\",\r\n    \"password\": \"Newyour_password\",\r\n    \"password_confirmation\": \"Newyour_password\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"role\": \"project-manager\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}/role",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}",
+                "role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"inactive\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/users/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Projects",
+      "item": [
+        {
+          "name": "Get Projects",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"{{base_url}}/api/projects\""
+          },
+          "response": []
+        },
+        {
+          "name": "Create Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();\r",
+                  "\r",
+                  "if (json.data?.id) {\r",
+                  "    pm.collectionVariables.set(\"project_id\", json.data.id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Web Development\",\r\n    \"project_key\": \"WD\",\r\n    \"description\": \"Project and team task management platform\",\r\n    \"manager_id\": 2,\r\n    \"status\": \"active\",\r\n    \"priority\": \"high\",\r\n    \"start_date\": \"2026-07-13\",\r\n    \"due_date\": \"2026-07-18\",\r\n    \"member_ids\": [\r\n        2,\r\n        3\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST \"{{base_url}}/api/projects\""
+          },
+          "response": []
+        },
+        {
+          "name": "Get Project",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"{{base_url}}/api/projects/{{project_id}}\""
+          },
+          "response": []
+        },
+        {
+          "name": "Update Project",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Updated TeamFlow Development\",\r\n    \"description\": \"Updated project description\",\r\n    \"manager_id\": 2,\r\n    \"status\": \"active\",\r\n    \"priority\": \"critical\",\r\n    \"start_date\": \"2026-07-13\",\r\n    \"due_date\": \"2026-07-20\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PUT \"{{base_url}}/api/projects/{{project_id}}\""
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Project",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE \"{{base_url}}/api/projects/{{project_id}}\""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Project Members",
+      "item": [
+        {
+          "name": "Get Members",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}/members",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}",
+                "members"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"{{base_url}}/api/projects/{{project_id}}/members\""
+          },
+          "response": []
+        },
+        {
+          "name": "Add Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"user_ids\": [\r\n        3,\r\n        5\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}/members",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}",
+                "members"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST \"{{base_url}}/api/projects/{{project_id}}/members\""
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Member",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}/members/{{member_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}",
+                "members",
+                "{{member_id}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE \"{{base_url}}/api/projects/{{project_id}}/members/{{member_id}}\""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "My Tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/my-tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "my-tasks"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"{{base_url}}/api/tasks/my-tasks\""
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}",
+                "tasks"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"{{base_url}}/api/projects/{{project_id}}/tasks\""
+          },
+          "response": []
+        },
+        {
+          "name": "Create Task",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();\r",
+                  "\r",
+                  "if (json.data?.id) {\r",
+                  "    pm.collectionVariables.set(\"task_id\", json.data.id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Build Sign-up Page\",\r\n    \"description\": \"Create the responsive Next.js authentication page\",\r\n    \"status\": \"todo\",\r\n    \"priority\": \"high\",\r\n    \"assigned_to\": 5,\r\n    \"due_date\": \"2026-07-15\",\r\n    \"estimated_hours\": 5\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}",
+                "tasks"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST \"{{base_url}}/api/projects/{{project_id}}/tasks\""
+          },
+          "response": []
+        },
+        {
+          "name": "Get Task",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}/tasks/{{task_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}",
+                "tasks",
+                "{{task_id}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"{{base_url}}/api/projects/{{project_id}}/tasks/{{task_id}}\""
+          },
+          "response": []
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects/{{project_id}}/tasks/{{task_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "projects",
+                "{{project_id}}",
+                "tasks",
+                "{{task_id}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PUT \"{{base_url}}/api/projects/{{project_id}}/tasks/{{task_id}}\""
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"status\": \"review\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}",
+                "status"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PATCH \"{{base_url}}/api/projects/{{project_id}}/tasks/{{task_id}}/status\""
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Task",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"assigned_to\": 3\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}/assignee",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}",
+                "assignee"
+              ]
+            },
+            "description": "Generated from cURL: curl -X PATCH \"{{base_url}}/api/projects/{{project_id}}/tasks/{{task_id}}/assign\""
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE \"{{base_url}}/api/projects/{{project_id}}/tasks/{{task_id}}\""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Get Comments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}/comments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}",
+                "comments"
+              ]
+            },
+            "description": "Generated from cURL: curl -X GET \"{{base_url}}/api/projects/{{project_id}}/tasks/{{task_id}}/comments\""
+          },
+          "response": []
+        },
+        {
+          "name": "Create Comment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"comment\": \"I have completed the initial login interface.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}/comments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}",
+                "comments"
+              ]
+            },
+            "description": "Generated from cURL: curl -X POST \"{{base_url}}/api/projects/{{project_id}}/tasks/{{task_id}}/comments\""
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              },
+              {
+                "key": "Referer",
+                "value": "http://localhost:3000/",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}/comments/{{comment_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}",
+                "comments",
+                "{{comment_id}}"
+              ]
+            },
+            "description": "Generated from cURL: curl -X DELETE \"{{base_url}}/api/projects/{{project_id}}/tasks/{{task_id}}/comments/{{comment_id}}\""
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          "pm.request.headers.upsert({\r",
+          "    key: \"Accept\",\r",
+          "    value: \"application/json\",\r",
+          "});\r",
+          "\r",
+          "pm.request.headers.upsert({\r",
+          "    key: \"Origin\",\r",
+          "    value: \"http://localhost:3000\",\r",
+          "});\r",
+          "\r",
+          "pm.request.headers.upsert({\r",
+          "    key: \"Referer\",\r",
+          "    value: \"http://localhost:3000/\",\r",
+          "});\r",
+          "\r",
+          "const protectedMethods = [\r",
+          "    \"POST\",\r",
+          "    \"PUT\",\r",
+          "    \"PATCH\",\r",
+          "    \"DELETE\",\r",
+          "];\r",
+          "\r",
+          "if (protectedMethods.includes(pm.request.method)) {\r",
+          "    const csrfToken = pm.collectionVariables.get(\"csrf_token\");\r",
+          "\r",
+          "    if (!csrfToken) {\r",
+          "        throw new Error(\r",
+          "            \"CSRF token variable is missing. Send the Get CSRF Cookie request first.\"\r",
+          "        );\r",
+          "    }\r",
+          "\r",
+          "    pm.request.headers.upsert({\r",
+          "        key: \"X-XSRF-TOKEN\",\r",
+          "        value: csrfToken,\r",
+          "    });\r",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    },
+    {
+      "key": "email",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    },
+    {
+      "key": "manager_id",
+      "value": ""
+    },
+    {
+      "key": "memeber_id",
+      "value": ""
+    },
+    {
+      "key": "project_id",
+      "value": ""
+    },
+    {
+      "key": "task_id",
+      "value": ""
+    },
+    {
+      "key": "comment_id",
+      "value": ""
+    },
+    {
+      "key": "csrf_token",
+      "value": ""
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+import { apiClient } from "@/lib/api-client";
+import type {
+  ApiResponse,
+  PaginatedResponse,
+} from "@/types/api";
+import type {
+  CreateProjectPayload,
+  Project,
+  ProjectFilters,
+  UpdateProjectPayload,
+} from "@/types/project";
+import type { User } from "@/types/user";
+
+function buildProjectQuery(
+  filters: ProjectFilters
+): URLSearchParams {
+  const params = new URLSearchParams();
+
+  if (filters.search) {
+    params.set("search", filters.search);
+  }
+
+  if (filters.status) {
+    params.set("status", filters.status);
+  }
+
+  if (filters.priority) {
+    params.set("priority", filters.priority);
+  }
+
+  params.set("page", String(filters.page ?? 1));
+  params.set(
+    "per_page",
+    String(filters.per_page ?? 10)
+  );
+
+  return params;
+}
+
+export const projectService = {
+  async getProjects(
+    filters: ProjectFilters
+  ): Promise<PaginatedResponse<Project>> {
+    const params = buildProjectQuery(filters);
+
+    const response =
+      await apiClient.get<PaginatedResponse<Project>>(
+        `/api/projects?${params.toString()}`
+      );
+
+    return response.data;
+  },
+
+  async getProject(
+    projectId: number
+  ): Promise<ApiResponse<Project>> {
+    const response =
+      await apiClient.get<ApiResponse<Project>>(
+        `/api/projects/${projectId}`
+      );
+
+    return response.data;
+  },
+
+  async createProject(
+    payload: CreateProjectPayload
+  ): Promise<ApiResponse<Project>> {
+    const response =
+      await apiClient.post<ApiResponse<Project>>(
+        "/api/projects",
+        payload
+      );
+
+    return response.data;
+  },
+
+  async updateProject(
+    projectId: number,
+    payload: UpdateProjectPayload
+  ): Promise<ApiResponse<Project>> {
+    const response =
+      await apiClient.put<ApiResponse<Project>>(
+        `/api/projects/${projectId}`,
+        payload
+      );
+
+    return response.data;
+  },
+
+  async deleteProject(
+    projectId: number
+  ): Promise<ApiResponse<null>> {
+    const response =
+      await apiClient.delete<ApiResponse<null>>(
+        `/api/projects/${projectId}`
+      );
+
+    return response.data;
+  },
+
+  async getMembers(
+    projectId: number
+  ): Promise<PaginatedResponse<User> | { data: User[] }> {
+    const response = await apiClient.get(
+      `/api/projects/${projectId}/members`
+    );
+
+    return response.data;
+  },
+
+  async addMembers(
+    projectId: number,
+    userIds: number[]
+  ): Promise<ApiResponse<User[]>> {
+    const response =
+      await apiClient.post<ApiResponse<User[]>>(
+        `/api/projects/${projectId}/members`,
+        {
+          user_ids: userIds,
+        }
+      );
+
+    return response.data;
+  },
+
+  async removeMember(
+    projectId: number,
+    userId: number
+  ): Promise<ApiResponse<null>> {
+    const response =
+      await apiClient.delete<ApiResponse<null>>(
+        `/api/projects/${projectId}/members/${userId}`
+      );
+
+    return response.data;
+  },
+};

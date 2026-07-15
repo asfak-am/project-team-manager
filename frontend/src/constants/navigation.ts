@@ -4,18 +4,10 @@ import {
   ListTodo,
   Trash2,
   Users,
+  UserRoundCheck,
 } from "lucide-react";
 
-export type NavigationItem = {
-  title: string;
-  href: string;
-  icon: React.ComponentType<{
-    className?: string;
-  }>;
-  permission?: string;
-};
-
-export const navigationItems: NavigationItem[] = [
+export const navigationItems = [
   {
     title: "Dashboard",
     href: "/dashboard",
@@ -31,12 +23,12 @@ export const navigationItems: NavigationItem[] = [
     title: "Tasks",
     href: "/tasks",
     icon: ListTodo,
-    permission: "tasks.view-assigned",
+    permission: "tasks.view-all",
   },
   {
     title: "My Tasks",
     href: "/my-tasks",
-    icon: ListTodo,
+    icon: UserRoundCheck,
     permission: "tasks.view-assigned",
   },
   {
@@ -46,9 +38,9 @@ export const navigationItems: NavigationItem[] = [
     permission: "users.view",
   },
   {
-  title: "Project Trash",
-  href: "/projects/trash",
-  icon: Trash2,
-  permission: "projects.restore",
-},
+    title: "Project Trash",
+    href: "/projects/trash",
+    icon: Trash2,
+    permission: "projects.restore",
+  },
 ];

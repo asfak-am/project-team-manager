@@ -65,6 +65,18 @@ export function TaskForm({
       },
   });
 
+  const selectedProject = projects.find(
+    (project) =>
+      String(project.id) ===
+      form.watch("project_id")
+  );
+
+  const selectedAssignee = members.find(
+    (member) =>
+      String(member.id) ===
+      form.watch("assigned_to")
+  );
+
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
@@ -83,19 +95,26 @@ export function TaskForm({
                 value={field.value}
                 disabled={lockProject || isSubmitting}
                 onValueChange={(value) => {
-                  const nextValue = value ?? "";
+                  const nextProjectId = value ?? "";
 
-                  field.onChange(nextValue);
+                  field.onChange(nextProjectId);
 
-                  if (nextValue) {
+                  // Clear the previous assignee when changing projects.
+                  form.setValue("assigned_to", "");
+
+                  if (nextProjectId) {
                     onProjectChange?.(
-                      Number(nextValue)
+                      Number(nextProjectId)
                     );
                   }
                 }}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select project" />
+                <SelectTrigger className="w-full">
+                  <SelectValue>
+                    {selectedProject
+                      ? `${selectedProject.project_key} — ${selectedProject.name}`
+                      : "Select project"}
+                  </SelectValue>
                 </SelectTrigger>
 
                 <SelectContent>
@@ -261,17 +280,26 @@ export function TaskForm({
 
               <Select
                 value={field.value || "unassigned"}
-                onValueChange={(value) =>
+                onValueChange={(value) => {
                   field.onChange(
                     value === "unassigned"
                       ? ""
                       : value
-                  )
+                  );
+                }}
+                disabled={
+                  isSubmitting ||
+                  !form.watch("project_id")
                 }
-                disabled={isSubmitting}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select assignee" />
+                <SelectTrigger className="w-full">
+                  <SelectValue>
+                    {field.value === "" ||
+                      field.value === "unassigned"
+                      ? "Unassigned"
+                      : selectedAssignee?.name ??
+                      "Select assignee"}
+                  </SelectValue>
                 </SelectTrigger>
 
                 <SelectContent>
@@ -289,6 +317,12 @@ export function TaskForm({
                   ))}
                 </SelectContent>
               </Select>
+
+              {!form.watch("project_id") && (
+                <p className="text-xs text-muted-foreground">
+                  Select a project first.
+                </p>
+              )}
             </Field>
           )}
         />

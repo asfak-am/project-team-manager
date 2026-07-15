@@ -7,7 +7,9 @@ use App\Http\Controllers\Api\ProjectMemberController;
 use App\Http\Controllers\Api\TaskCommentController;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +34,23 @@ Route::middleware('auth:sanctum')->group(function () {
     | Authentication
     |--------------------------------------------------------------------------
     */
+
+    Route::prefix('profile')->group(function () {
+    Route::get('/', [
+        ProfileController::class,
+        'show',
+    ]);
+
+    Route::put('/', [
+        ProfileController::class,
+        'update',
+    ]);
+
+    Route::put('/password', [
+        ProfileController::class,
+        'updatePassword',
+    ]);
+});
 
     Route::get('/user', [
         AuthController::class,

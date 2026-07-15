@@ -37,6 +37,10 @@ function buildProjectQuery(
   return params;
 }
 
+type ProjectMembersResponse = {
+  data: User[];
+};
+
 export const projectService = {
   async getProjects(
     filters: ProjectFilters
@@ -88,107 +92,110 @@ export const projectService = {
   },
 
   async deleteProject(
-  projectId: number,
-  permanent: boolean
-): Promise<ApiResponse<null>> {
-  const response =
-    await apiClient.delete<ApiResponse<null>>(
-      `/api/projects/${projectId}`,
-      {
-        data: {
-          permanent,
-        },
-      }
-    );
-
-  return response.data;
-},
-
-async getTrashedProjects(
-  filters: {
-    search?: string;
-    page?: number;
-    per_page?: number;
-  }
-): Promise<PaginatedResponse<Project>> {
-  const params = new URLSearchParams();
-
-  if (filters.search) {
-    params.set("search", filters.search);
-  }
-
-  params.set("page", String(filters.page ?? 1));
-  params.set(
-    "per_page",
-    String(filters.per_page ?? 10)
-  );
-
-  const response =
-    await apiClient.get<
-      PaginatedResponse<Project>
-    >(
-      `/api/trashed-projects?${params.toString()}`
-    );
-
-  return response.data;
-},
-
-async restoreProject(
-  projectId: number
-): Promise<ApiResponse<Project>> {
-  const response =
-    await apiClient.patch<ApiResponse<Project>>(
-      `/api/trashed-projects/${projectId}/restore`
-    );
-
-  return response.data;
-},
-
-async forceDeleteProject(
-  projectId: number
-): Promise<ApiResponse<null>> {
-  const response =
-    await apiClient.delete<ApiResponse<null>>(
-      `/api/trashed-projects/${projectId}/force`
-    );
-
-  return response.data;
-},
-
-  async getMembers(
-    projectId: number
-  ): Promise<PaginatedResponse<User> | { data: User[] }> {
-    const response = await apiClient.get(
-      `/api/projects/${projectId}/members`
-    );
-
-    return response.data;
-  },
-
-  async addMembers(
     projectId: number,
-    userIds: number[]
-  ): Promise<ApiResponse<User[]>> {
+    permanent: boolean
+  ): Promise<ApiResponse<null>> {
     const response =
-      await apiClient.post<ApiResponse<User[]>>(
-        `/api/projects/${projectId}/members`,
+      await apiClient.delete<ApiResponse<null>>(
+        `/api/projects/${projectId}`,
         {
-          user_ids: userIds,
+          data: {
+            permanent,
+          },
         }
       );
 
     return response.data;
   },
 
-  async removeMember(
-    projectId: number,
-    userId: number
-  ): Promise<ApiResponse<null>> {
+  async getTrashedProjects(
+    filters: {
+      search?: string;
+      page?: number;
+      per_page?: number;
+    }
+  ): Promise<PaginatedResponse<Project>> {
+    const params = new URLSearchParams();
+
+    if (filters.search) {
+      params.set("search", filters.search);
+    }
+
+    params.set("page", String(filters.page ?? 1));
+    params.set(
+      "per_page",
+      String(filters.per_page ?? 10)
+    );
+
     const response =
-      await apiClient.delete<ApiResponse<null>>(
-        `/api/projects/${projectId}/members/${userId}`
+      await apiClient.get<
+        PaginatedResponse<Project>
+      >(
+        `/api/trashed-projects?${params.toString()}`
       );
 
     return response.data;
   },
+
+  async restoreProject(
+    projectId: number
+  ): Promise<ApiResponse<Project>> {
+    const response =
+      await apiClient.patch<ApiResponse<Project>>(
+        `/api/trashed-projects/${projectId}/restore`
+      );
+
+    return response.data;
+  },
+
+  async forceDeleteProject(
+    projectId: number
+  ): Promise<ApiResponse<null>> {
+    const response =
+      await apiClient.delete<ApiResponse<null>>(
+        `/api/trashed-projects/${projectId}/force`
+      );
+
+    return response.data;
+  },
+
+
+
+async getMembers(
+  projectId: number
+): Promise<User[]> {
+  const response =
+    await apiClient.get<ProjectMembersResponse>(
+      `/api/projects/${projectId}/members`
+    );
+
+  return response.data.data;
+},
+
+async addMembers(
+  projectId: number,
+  userIds: number[]
+): Promise<ApiResponse<User[]>> {
+  const response =
+    await apiClient.post<ApiResponse<User[]>>(
+      `/api/projects/${projectId}/members`,
+      {
+        user_ids: userIds,
+      }
+    );
+
+  return response.data;
+},
+
+async removeMember(
+  projectId: number,
+  userId: number
+): Promise<ApiResponse<null>> {
+  const response =
+    await apiClient.delete<ApiResponse<null>>(
+      `/api/projects/${projectId}/members/${userId}`
+    );
+
+  return response.data;
+},
 };

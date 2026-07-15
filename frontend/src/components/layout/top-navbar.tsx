@@ -32,6 +32,10 @@ function getPageTitle(pathname: string): string {
     return "Users";
   }
 
+  if (pathname.startsWith("/projects/trash")) {
+    return "Project Trash";
+  }
+
   if (pathname.startsWith("/projects")) {
     return "Projects";
   }
@@ -56,7 +60,7 @@ function getInitials(name?: string): string {
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
-    .map((part) => part[0])
+    .map((part) => part.charAt(0))
     .join("")
     .toUpperCase();
 }
@@ -104,71 +108,88 @@ export function TopNavbar() {
         </h1>
       </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              variant="ghost"
-              className="h-auto max-w-64 gap-3 px-2 py-1.5"
-            />
-          }
-        >
-          <Avatar className="size-8 shrink-0">
-            <AvatarFallback>
-              {getInitials(user?.name)}
-            </AvatarFallback>
-          </Avatar>
+<DropdownMenu>
+  <DropdownMenuTrigger
+    render={
+      <Button
+        type="button"
+        variant="ghost"
+        className="h-auto max-w-64 gap-3 px-2 py-1.5"
+        aria-label="Open account menu"
+      />
+    }
+  >
+    <Avatar className="size-8 shrink-0">
+      <AvatarFallback>
+        {getInitials(user?.name)}
+      </AvatarFallback>
+    </Avatar>
 
-          <div className="hidden min-w-0 text-left sm:block">
-            <p className="truncate text-sm font-medium">
-              {user?.name}
-            </p>
+    <div className="hidden min-w-0 text-left sm:block">
+      <p className="truncate text-sm font-medium">
+        {user?.name}
+      </p>
 
-            <p className="truncate text-xs text-muted-foreground">
-              {user?.roles?.join(", ")}
-            </p>
-          </div>
+      <p className="truncate text-xs text-muted-foreground">
+        {user?.roles?.join(", ") || "No role"}
+      </p>
+    </div>
 
-          <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" />
-        </DropdownMenuTrigger>
+    <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" />
+  </DropdownMenuTrigger>
 
-        <DropdownMenuContent
-          align="end"
-          className="w-60"
-        >
-          <DropdownMenuLabel>
-            <p className="font-medium">
-              {user?.name}
-            </p>
+  <DropdownMenuContent
+    align="end"
+    sideOffset={8}
+    className="w-64"
+  >
+    <DropdownMenuItem
+      disabled
+      className="block opacity-100"
+    >
+      <div className="min-w-0 space-y-1">
+        <p className="truncate font-medium text-foreground">
+          {user?.name}
+        </p>
 
-            <p className="truncate text-xs font-normal text-muted-foreground">
-              {user?.email}
-            </p>
-          </DropdownMenuLabel>
+        <p className="truncate text-xs text-muted-foreground">
+          {user?.email}
+        </p>
 
-          <DropdownMenuSeparator />
+        <p className="truncate text-xs capitalize text-muted-foreground">
+          {user?.roles?.join(", ") || "No role"}
+        </p>
+      </div>
+    </DropdownMenuItem>
 
-          <DropdownMenuItem disabled>
-            <UserRound />
-            Profile
-          </DropdownMenuItem>
+    <DropdownMenuSeparator />
 
-          <DropdownMenuSeparator />
+    <DropdownMenuItem disabled>
+      <UserRound className="size-4" />
+      Profile
+    </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-          >
-            {isLoggingOut ? (
-              <LoaderCircle className="animate-spin" />
-            ) : (
-              <LogOut />
-            )}
+    <DropdownMenuSeparator />
 
-            Logout
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <DropdownMenuItem
+      onClick={() => {
+        void handleLogout();
+      }}
+      disabled={isLoggingOut}
+      className="text-destructive"
+    >
+      {isLoggingOut ? (
+        <LoaderCircle className="size-4 animate-spin" />
+      ) : (
+        <LogOut className="size-4" />
+      )}
+
+      {isLoggingOut
+        ? "Logging out..."
+        : "Logout"}
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
     </header>
   );
 }

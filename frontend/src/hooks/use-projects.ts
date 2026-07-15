@@ -209,10 +209,18 @@ export function useProjectMembers(
   projectId: number
 ) {
   return useQuery({
-    queryKey: projectKeys.members(projectId),
+    queryKey: [
+      "projects",
+      projectId,
+      "members",
+    ],
+
     queryFn: () =>
       projectService.getMembers(projectId),
-    enabled: projectId > 0,
+
+    enabled:
+      Number.isInteger(projectId) &&
+      projectId > 0,
   });
 }
 
@@ -235,15 +243,19 @@ export function useAddProjectMembers() {
     onSuccess: async (_, variables) => {
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: projectKeys.members(
-            variables.projectId
-          ),
+          queryKey: [
+            "projects",
+            variables.projectId,
+            "members",
+          ],
         }),
+
         queryClient.invalidateQueries({
           queryKey: projectKeys.detail(
             variables.projectId
           ),
         }),
+
         queryClient.invalidateQueries({
           queryKey: projectKeys.all,
         }),
@@ -271,14 +283,21 @@ export function useRemoveProjectMember() {
     onSuccess: async (_, variables) => {
       await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: projectKeys.members(
-            variables.projectId
-          ),
+          queryKey: [
+            "projects",
+            variables.projectId,
+            "members",
+          ],
         }),
+
         queryClient.invalidateQueries({
           queryKey: projectKeys.detail(
             variables.projectId
           ),
+        }),
+
+        queryClient.invalidateQueries({
+          queryKey: ["tasks"],
         }),
       ]);
     },

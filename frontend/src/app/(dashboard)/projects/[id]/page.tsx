@@ -29,6 +29,9 @@ import {
   formatProjectStatus,
   getProjectStatusVariant,
 } from "@/lib/project-utils";
+import { CreateTaskDialog } from "@/components/tasks/create-task-dialog";
+import { useAuth } from "@/hooks/use-auth";
+import { ManageMembersDialog } from "@/components/projects/manage-members-dialog";
 
 export default function ProjectDetailsPage() {
   const params = useParams<{
@@ -37,11 +40,19 @@ export default function ProjectDetailsPage() {
 
   const projectId = Number(params.id);
 
+  const { hasPermission } = useAuth();
   const projectQuery =
     useProject(projectId);
 
   const tasksQuery =
     useProjectTasks(projectId);
+
+  const canManageMembers = hasPermission(
+    "projects.manage-members"
+  );
+
+
+
 
   if (
     projectQuery.isLoading ||
@@ -94,16 +105,19 @@ export default function ProjectDetailsPage() {
   const progress =
     tasks.length > 0
       ? Math.round(
-          (completedTasks /
-            tasks.length) *
-            100
-        )
+        (completedTasks /
+          tasks.length) *
+        100
+      )
       : 0;
 
   const members =
     project.members ?? [];
 
+
+
   return (
+
     <div className="space-y-6">
       <Button
         variant="ghost"
@@ -116,35 +130,39 @@ export default function ProjectDetailsPage() {
         Back to projects
       </Button>
 
-      <header className="space-y-4">
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-md border px-2 py-1 text-xs font-semibold">
-                {project.project_key}
-              </span>
+      <header className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-md border px-2 py-1 text-xs font-semibold">
+              {project.project_key}
+            </span>
 
-              <Badge
-                variant={getProjectStatusVariant(
-                  project.status
-                )}
-              >
-                {formatProjectStatus(
-                  project.status
-                )}
-              </Badge>
-            </div>
-
-            <h2 className="mt-3 text-3xl font-bold tracking-tight">
-              {project.name}
-            </h2>
-
-            <p className="mt-2 max-w-3xl text-muted-foreground">
-              {project.description ||
-                "No project description."}
-            </p>
+            <Badge
+              variant={getProjectStatusVariant(
+                project.status
+              )}
+            >
+              {formatProjectStatus(
+                project.status
+              )}
+            </Badge>
           </div>
+
+          <h2 className="mt-3 text-3xl font-bold tracking-tight">
+            {project.name}
+          </h2>
+
+          <p className="mt-2 max-w-3xl text-muted-foreground">
+            {project.description ||
+              "No project description."}
+          </p>
         </div>
+
+        {canManageMembers && (
+          <ManageMembersDialog
+            project={project}
+          />
+        )}
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -247,8 +265,8 @@ export default function ProjectDetailsPage() {
                 <p className="mt-1 font-medium">
                   {project.start_date
                     ? new Date(
-                        project.start_date
-                      ).toLocaleDateString()
+                      project.start_date
+                    ).toLocaleDateString()
                     : "Not specified"}
                 </p>
               </div>
@@ -263,8 +281,8 @@ export default function ProjectDetailsPage() {
 
                   {project.due_date
                     ? new Date(
-                        project.due_date
-                      ).toLocaleDateString()
+                      project.due_date
+                    ).toLocaleDateString()
                     : "Not specified"}
                 </p>
               </div>
@@ -321,19 +339,25 @@ export default function ProjectDetailsPage() {
       </section>
 
       <section className="space-y-4">
-        <div>
-          <h3 className="text-xl font-semibold">
-            Project tasks
-          </h3>
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+          <div>
+            <h3 className="text-xl font-semibold">
+              Project tasks
+            </h3>
 
-          <p className="text-sm text-muted-foreground">
-            Tasks belonging to this project.
-          </p>
+            <p className="text-sm text-muted-foreground">
+              Tasks belonging to this project.
+            </p>
+          </div>
+
+          {hasPermission("tasks.create") && (
+            <CreateTaskDialog
+              defaultProjectId={projectId}
+            />
+          )}
         </div>
 
-        <ProjectTaskList
-          tasks={tasks}
-        />
+        <ProjectTaskList tasks={tasks} />
       </section>
     </div>
   );

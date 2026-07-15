@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -102,6 +103,62 @@ class ProfileController extends Controller
             'message' =>
             'Password changed successfully.',
             'data' => null,
+        ]);
+    }
+public function updateAvatar(
+    Request $request
+): JsonResponse {
+    $validated = $request->validate([
+        'avatar' => [
+            'required',
+            'image',
+            'mimes:jpg,jpeg,png,webp',
+            'max:2048',
+        ],
+    ]);
+
+    $user = $request->user();
+
+    $path = $request
+        ->file('avatar')
+        ->store('avatars', 'public');
+
+    $user->update([
+        'avatar_path' => $path,
+    ]);
+
+    $user->load('roles');
+
+    return response()->json([
+        'success' => true,
+        'message' =>
+            'Profile picture updated successfully.',
+        'data' => new UserResource($user),
+    ]);
+}
+
+    public function deleteAvatar(
+        Request $request
+    ): JsonResponse {
+        $user = $request->user();
+
+        if ($user->avatar_path) {
+            Storage::disk('public')->delete(
+                $user->avatar_path
+            );
+
+            $user->update([
+                'avatar_path' => null,
+            ]);
+        }
+
+        $user->load('roles');
+
+        return response()->json([
+            'success' => true,
+            'message' =>
+            'Profile picture removed successfully.',
+            'data' => new UserResource($user),
         ]);
     }
 }

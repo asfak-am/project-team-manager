@@ -71,7 +71,7 @@ export default function MyTasksPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h2 className="text-2xl font-bold tracking-tight">
+                <h2 className="font-heading text-2xl font-bold tracking-tight">
           My Tasks
         </h2>
 

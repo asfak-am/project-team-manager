@@ -16,6 +16,10 @@ export const profileKeys = {
   all: ["profile"] as const,
 };
 
+const AUTH_QUERY_KEY = [
+  "auth-user",
+] as const;
+
 export function useProfile() {
   return useQuery({
     queryKey: profileKeys.all,
@@ -24,13 +28,16 @@ export function useProfile() {
 }
 
 export function useUpdateProfile() {
-  const queryClient = useQueryClient();
+  const queryClient =
+    useQueryClient();
 
   return useMutation({
     mutationFn: (
       payload: UpdateProfilePayload
     ) =>
-      profileService.updateProfile(payload),
+      profileService.updateProfile(
+        payload
+      ),
 
     onSuccess: async (response) => {
       queryClient.setQueryData(
@@ -38,18 +45,13 @@ export function useUpdateProfile() {
         response
       );
 
-      /*
-       * Update the authenticated-user cache too.
-       * Replace ["auth-user"] if your useAuth hook
-       * uses a different query key.
-       */
       queryClient.setQueryData(
-        ["auth-user"],
+        AUTH_QUERY_KEY,
         response
       );
 
       await queryClient.invalidateQueries({
-        queryKey: ["auth-user"],
+        queryKey: AUTH_QUERY_KEY,
       });
     },
   });
@@ -60,6 +62,77 @@ export function useUpdatePassword() {
     mutationFn: (
       payload: UpdatePasswordPayload
     ) =>
-      profileService.updatePassword(payload),
+      profileService.updatePassword(
+        payload
+      ),
+  });
+}
+
+export function useUpdateAvatar() {
+  const queryClient =
+    useQueryClient();
+
+  return useMutation({
+    mutationFn: async (
+      file: File
+    ) => {
+      return profileService.updateAvatar(
+        file
+      );
+    },
+
+    onSuccess: async (response) => {
+      queryClient.setQueryData(
+        profileKeys.all,
+        response
+      );
+
+      queryClient.setQueryData(
+        AUTH_QUERY_KEY,
+        response
+      );
+
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: profileKeys.all,
+        }),
+
+        queryClient.invalidateQueries({
+          queryKey: AUTH_QUERY_KEY,
+        }),
+      ]);
+    },
+  });
+}
+
+export function useDeleteAvatar() {
+  const queryClient =
+    useQueryClient();
+
+  return useMutation({
+    mutationFn: () =>
+      profileService.deleteAvatar(),
+
+    onSuccess: async (response) => {
+      queryClient.setQueryData(
+        profileKeys.all,
+        response
+      );
+
+      queryClient.setQueryData(
+        AUTH_QUERY_KEY,
+        response
+      );
+
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: profileKeys.all,
+        }),
+
+        queryClient.invalidateQueries({
+          queryKey: AUTH_QUERY_KEY,
+        }),
+      ]);
+    },
   });
 }

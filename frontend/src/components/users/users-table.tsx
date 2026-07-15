@@ -6,6 +6,7 @@ import { useState } from "react";
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
 } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -107,12 +108,18 @@ export function UsersTable({
               <TableRow key={user.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <Avatar className="size-9">
-                      <AvatarFallback>
+                    <Avatar className="size-9 border">
+                      {user.avatar_url && (
+                        <AvatarImage
+                          src={user.avatar_url}
+                          alt={user.name}
+                          className="object-cover"
+                        />
+                      )}
+                      <AvatarFallback className="text-xs font-semibold">
                         {getUserInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
-
                     <div className="min-w-0">
                       <p className="truncate font-medium">
                         {user.name}
@@ -124,7 +131,6 @@ export function UsersTable({
                     </div>
                   </div>
                 </TableCell>
-
                 <TableCell>
                   {formatRole(user.roles?.[0])}
                 </TableCell>
@@ -142,7 +148,6 @@ export function UsersTable({
                       : "Inactive"}
                   </Badge>
                 </TableCell>
-
                 <TableCell>
                   {user.created_at
                     ? new Date(
@@ -150,7 +155,6 @@ export function UsersTable({
                       ).toLocaleDateString()
                     : "—"}
                 </TableCell>
-
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger
@@ -176,7 +180,6 @@ export function UsersTable({
                       >
                         Edit user
                       </DropdownMenuItem>
-
                       <DropdownMenuItem
                         onClick={() =>
                           openAction(user, "role")
@@ -184,7 +187,6 @@ export function UsersTable({
                       >
                         Change role
                       </DropdownMenuItem>
-
                       <DropdownMenuItem
                         onClick={() =>
                           openAction(user, "status")

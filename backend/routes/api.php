@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [
     AuthController::class,
     'login',
-]);
+])->middleware('web');
 
 /*
 |--------------------------------------------------------------------------
@@ -36,21 +36,30 @@ Route::middleware('auth:sanctum')->group(function () {
     */
 
     Route::prefix('profile')->group(function () {
-    Route::get('/', [
-        ProfileController::class,
-        'show',
-    ]);
+        Route::get('/', [
+            ProfileController::class,
+            'show',
+        ]);
 
-    Route::put('/', [
-        ProfileController::class,
-        'update',
-    ]);
+        Route::put('/', [
+            ProfileController::class,
+            'update',
+        ]);
 
-    Route::put('/password', [
-        ProfileController::class,
-        'updatePassword',
-    ]);
-});
+        Route::put('/password', [
+            ProfileController::class,
+            'updatePassword',
+        ]);
+        Route::post('/avatar', [
+            ProfileController::class,
+            'updateAvatar',
+        ]);
+
+        Route::delete('/avatar', [
+            ProfileController::class,
+            'deleteAvatar',
+        ]);
+    });
 
     Route::get('/user', [
         AuthController::class,

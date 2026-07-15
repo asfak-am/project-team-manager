@@ -15,15 +15,24 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'status' => $this->status,
 
-            'roles' => $this->getRoleNames()->values(),
+            'avatar_url' => $this->avatar_path
+                ? asset("storage/{$this->avatar_path}")
+                : null,
+
+            'roles' => $this
+                ->getRoleNames()
+                ->values(),
 
             'permissions' => $this
                 ->getAllPermissions()
                 ->pluck('name')
                 ->values(),
 
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
+            'created_at' =>
+                $this->created_at?->toISOString(),
+
+            'updated_at' =>
+                $this->updated_at?->toISOString(),
         ];
     }
 }

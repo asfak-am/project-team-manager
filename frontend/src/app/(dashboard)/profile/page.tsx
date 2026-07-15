@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProfile } from "@/hooks/use-profile";
+import { AvatarUpload } from "@/components/profile/avatar-upload";
 
 function getInitials(name: string): string {
   return name
@@ -72,32 +73,29 @@ export default function ProfilePage() {
         </p>
       </header>
 
-      <Card>
-        <CardContent className="flex flex-col gap-5 p-6 sm:flex-row sm:items-center">
-          <Avatar className="size-20">
-            <AvatarFallback className="text-xl">
-              {getInitials(user.name)}
-            </AvatarFallback>
-          </Avatar>
+<Card className="overflow-hidden">
+  <div className="h-6 " />
 
-          <div className="min-w-0 flex-1">
-            <h3 className="truncate text-xl font-semibold">
-              {user.name}
-            </h3>
+  <CardContent className="-mt-10 p-6 pt-0">
+    <AvatarUpload user={user} />
 
-            <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
-              <Mail className="size-4" />
-              {user.email}
-            </p>
+    <div className="mt-6 border-t pt-5">
+      <h3 className="text-xl font-semibold">
+        {user.name}
+      </h3>
 
-            <p className="mt-1 flex items-center gap-2 text-sm capitalize text-muted-foreground">
-              <ShieldCheck className="size-4" />
-              {user.roles?.join(", ") ||
-                "No role"}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <p className="mt-1 text-sm text-muted-foreground">
+        {user.email}
+      </p>
+
+      <p className="mt-1 text-sm capitalize text-muted-foreground">
+        {user.roles
+          ?.map((role) => role.replaceAll("-", " "))
+          .join(", ")}
+      </p>
+    </div>
+  </CardContent>
+</Card>
 
       <div className="grid gap-6 xl:grid-cols-2">
         <Card>

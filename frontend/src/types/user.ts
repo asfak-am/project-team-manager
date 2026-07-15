@@ -11,7 +11,7 @@ export type User = {
   id: number;
   name: string;
   email: string;
-  avatar: string | null;
+  avatar_url: string | null;
   status: UserStatus;
   roles: UserRole[];
   permissions?: string[];
@@ -49,4 +49,19 @@ export type UserFilters = {
   status?: UserStatus | "";
   page?: number;
   per_page?: number;
+};
+
+export type Role =
+  | "administrator"
+  | "project-manager"
+  | "team-member";
+
+export type AuthUser = {
+  id: number;
+  name: string;
+  email: string;
+  avatar_url: string | null;
+  status: "active" | "inactive";
+  roles: Role[];
+  permissions: string[];
 };

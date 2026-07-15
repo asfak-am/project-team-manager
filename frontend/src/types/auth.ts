@@ -7,12 +7,12 @@ export type AuthUser = {
   id: number;
   name: string;
   email: string;
-  avatar: string | null;
+  avatar_url: string | null;
   status: "active" | "inactive";
   roles: Role[];
   permissions: string[];
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
 };
 
 export type LoginCredentials = {

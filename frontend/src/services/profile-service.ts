@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/api-client";
+
 import type { ApiResponse } from "@/types/api";
 import type {
   UpdatePasswordPayload,
@@ -35,6 +36,33 @@ export const profileService = {
       await apiClient.put<ApiResponse<null>>(
         "/api/profile/password",
         payload
+      );
+
+    return response.data;
+  },
+
+  async updateAvatar(
+    file: File
+  ): Promise<ApiResponse<User>> {
+    const formData = new FormData();
+
+    formData.append("avatar", file);
+
+    const response =
+      await apiClient.post<ApiResponse<User>>(
+        "/api/profile/avatar",
+        formData
+      );
+
+    return response.data;
+  },
+
+  async deleteAvatar(): Promise<
+    ApiResponse<User>
+  > {
+    const response =
+      await apiClient.delete<ApiResponse<User>>(
+        "/api/profile/avatar"
       );
 
     return response.data;

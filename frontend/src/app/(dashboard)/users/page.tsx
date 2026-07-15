@@ -54,7 +54,7 @@ export default function UsersPage() {
     <div className="space-y-6">
       <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">
+          <h2 className="font-heading text-2xl font-bold tracking-tight">
             Users
           </h2>
 

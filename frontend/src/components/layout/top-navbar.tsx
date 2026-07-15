@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
 } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -124,6 +125,13 @@ export function TopNavbar() {
           }
         >
           <Avatar className="size-8 shrink-0">
+            {user?.avatar_url && (
+              <AvatarImage
+                src={user.avatar_url}
+                alt={user.name ?? "User avatar"}
+                className="object-cover"
+              />
+            )}
             <AvatarFallback>
               {getInitials(user?.name)}
             </AvatarFallback>
@@ -141,7 +149,6 @@ export function TopNavbar() {
 
           <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" />
         </DropdownMenuTrigger>
-
         <DropdownMenuContent
           align="end"
           sideOffset={8}

@@ -16,103 +16,43 @@ The platform enables administrators, project managers, and team members to colla
 
 ## 🔐 Authentication
 
-- Secure Login
-- Logout
-- Laravel Sanctum Authentication
-- Session-based Authentication
-- CSRF Protection
+-   Secure login with Laravel Sanctum
+-   Profile management
+-   Avatar upload
+-   Password change
 
----
+### Roles
 
-## 📊 Dashboard
+-   Administrator
+-   Project Manager
+-   Team Member
 
-- Role-based Dashboard
-- Project Statistics
-- Task Statistics
-- Quick Overview Cards
+### Project Management
 
----
+-   Create, update, delete, restore projects
+-   Manage project members
+-   Track project progress
 
-## 👥 User Management
+### Task Management
 
-- View Users
-- Search Users
-- Create User
-- Edit User
-- Delete User
-- Change User Role
-- Change User Status
+-   Administrator assigns management tasks to Project Managers.
+-   Project Managers assign sub-tasks to Team Members.
+-   Team Members view only their assigned tasks.
+-   Inline task status updates.
 
----
+## Task Delegation Workflow
 
-## 👤 Profile
-
-- View Profile
-- Update Personal Information
-- Change Password
-- Upload Profile Avatar
-- Delete Avatar
-
----
-
-## 📁 Project Management
-
-- Create Project
-- Edit Project
-- Delete Project
-- Soft Delete
-- Restore Deleted Project
-- Permanently Delete Project
-- View Project Details
-- Search Projects
-- Filter Projects
-
----
-
-## 👨‍💼 Project Member Management
-
-- Add Members
-- Remove Members
-- Prevent Removing Project Manager
-- Member Assignment
-
----
-
-## ✅ Task Management
-
-- Create Task
-- Edit Task
-- Delete Task
-- Assign Task
-- Update Task Status
-- View Task Details
-- Search Tasks
-- Filter Tasks
-
----
-
-## 📝 My Tasks
-
-- View Assigned Tasks
-- Search Assigned Tasks
-- Filter Assigned Tasks
-
----
-
-## 🔒 Authorization
-
-- Laravel Policies
-- Gates
-- Spatie Laravel Permission
-- Role Based Access Control
-
-Roles
-
-- Administrator
-- Project Manager
-- Team Member
-
----
+``` text
+Administrator
+      │
+      ▼
+Project Manager
+      │
+Creates Sub Tasks
+      │
+      ▼
+Team Members
+```
 
 # 🛠 Technology Stack
 

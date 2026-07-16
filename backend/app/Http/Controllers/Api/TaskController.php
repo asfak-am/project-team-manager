@@ -32,65 +32,85 @@ class TaskController extends Controller
                 'creator.roles',
             ])
             ->withCount('comments')
+
             ->when(
                 ! $user->hasRole('administrator'),
-                function ($query) use ($user) {
-                    $query->whereHas(
-                        'project',
-                        function ($projectQuery) use ($user) {
-                            $projectQuery->where(
-                                function ($query) use ($user) {
-                                    $query
-                                        ->where(
-                                            'manager_id',
-                                            $user->id
-                                        )
-                                        ->orWhereHas(
-                                            'members',
-                                            fn ($memberQuery) =>
-                                                $memberQuery->where(
-                                                    'users.id',
-                                                    $user->id
-                                                )
-                                        );
-                                }
+                function ($query) use ($user): void {
+                    if (
+                        $user->hasRole(
+                            'project-manager'
+                        )
+                    ) {
+                        $query->where(
+                            function ($taskQuery) use ($user): void {
+                                $taskQuery
+                                    ->where(
+                                        'assigned_to',
+                                        $user->id
+                                    )
+                                    ->orWhere(
+                                        'created_by',
+                                        $user->id
+                                    );
+                            }
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        $user->hasRole(
+                            'team-member'
+                        )
+                    ) {
+                        $query
+                            ->where(
+                                'target_role',
+                                'team-member'
+                            )
+                            ->where(
+                                'assigned_to',
+                                $user->id
                             );
-                        }
-                    );
+                    }
                 }
             )
+
+            // Keep your existing filters below:
             ->when(
                 $request->filled('project_id'),
-                fn ($query) => $query->where(
+                fn($query) => $query->where(
                     'project_id',
                     $request->integer('project_id')
                 )
             )
             ->when(
                 $request->filled('assigned_to'),
-                fn ($query) => $query->where(
+                fn($query) => $query->where(
                     'assigned_to',
                     $request->integer('assigned_to')
                 )
             )
             ->when(
                 $request->filled('status'),
-                fn ($query) => $query->where(
+                fn($query) => $query->where(
                     'status',
                     $request->string('status')
                 )
             )
             ->when(
                 $request->filled('priority'),
-                fn ($query) => $query->where(
+                fn($query) => $query->where(
                     'priority',
                     $request->string('priority')
                 )
             )
             ->when(
                 $request->filled('search'),
-                function ($query) use ($request) {
-                    $search = $request->string('search')->trim();
+                function ($query) use ($request): void {
+                    $search = $request
+                        ->string('search')
+                        ->trim();
 
                     $query->where(
                         'title',
@@ -101,15 +121,29 @@ class TaskController extends Controller
             )
             ->when(
                 $request->boolean('overdue'),
-                fn ($query) => $query
-                    ->whereDate('due_date', '<', today())
-                    ->where('status', '!=', 'completed')
+                fn($query) => $query
+                    ->whereDate(
+                        'due_date',
+                        '<',
+                        today()
+                    )
+                    ->where(
+                        'status',
+                        '!=',
+                        'completed'
+                    )
             )
             ->orderByRaw('due_date IS NULL')
             ->orderBy('due_date')
             ->latest('id')
             ->paginate(
-                perPage: min($request->integer('per_page', 10), 50)
+                perPage: min(
+                    $request->integer(
+                        'per_page',
+                        10
+                    ),
+                    50
+                )
             )
             ->withQueryString();
 
@@ -118,8 +152,31 @@ class TaskController extends Controller
 
     public function myTasks(Request $request)
     {
+        $user = $request->user();
+
         $tasks = Task::query()
-            ->where('assigned_to', $request->user()->id)
+            ->where(
+                'assigned_to',
+                $user->id
+            )
+            ->when(
+                $user->hasRole(
+                    'project-manager'
+                ),
+                fn($query) => $query->where(
+                    'target_role',
+                    'project-manager'
+                )
+            )
+            ->when(
+                $user->hasRole(
+                    'team-member'
+                ),
+                fn($query) => $query->where(
+                    'target_role',
+                    'team-member'
+                )
+            )
             ->with([
                 'project.manager',
                 'assignee.roles',
@@ -128,26 +185,196 @@ class TaskController extends Controller
             ->withCount('comments')
             ->when(
                 $request->filled('status'),
-                fn ($query) => $query->where(
+                fn($query) => $query->where(
                     'status',
                     $request->string('status')
                 )
             )
             ->when(
                 $request->filled('priority'),
-                fn ($query) => $query->where(
+                fn($query) => $query->where(
                     'priority',
                     $request->string('priority')
                 )
             )
+            ->when(
+                $request->filled('search'),
+                function ($query) use ($request): void {
+                    $search = $request
+                        ->string('search')
+                        ->trim();
+
+                    $query->where(
+                        'title',
+                        'like',
+                        "%{$search}%"
+                    );
+                }
+            )
             ->orderByRaw('due_date IS NULL')
             ->orderBy('due_date')
             ->paginate(
-                perPage: min($request->integer('per_page', 10), 50)
+                perPage: min(
+                    $request->integer(
+                        'per_page',
+                        10
+                    ),
+                    50
+                )
             )
             ->withQueryString();
 
         return TaskResource::collection($tasks);
+    }
+
+    public function assignedByMe(
+        Request $request
+    ) {
+        $user = $request->user();
+
+        abort_unless(
+            $user->hasAnyRole([
+                'administrator',
+                'project-manager',
+            ]),
+            403,
+            'You are not allowed to access delegated tasks.'
+        );
+
+        $tasks = Task::query()
+            ->where(
+                'created_by',
+                $user->id
+            )
+            ->when(
+                $user->hasRole(
+                    'project-manager'
+                ),
+                fn($query) => $query->where(
+                    'target_role',
+                    'team-member'
+                )
+            )
+            ->with([
+                'project.manager',
+                'assignee.roles',
+                'creator.roles',
+            ])
+            ->withCount('comments')
+            ->when(
+                $request->filled('status'),
+                fn($query) => $query->where(
+                    'status',
+                    $request->string('status')
+                )
+            )
+            ->when(
+                $request->filled('priority'),
+                fn($query) => $query->where(
+                    'priority',
+                    $request->string('priority')
+                )
+            )
+            ->when(
+                $request->filled('search'),
+                function ($query) use ($request): void {
+                    $search = $request
+                        ->string('search')
+                        ->trim();
+
+                    $query->where(
+                        'title',
+                        'like',
+                        "%{$search}%"
+                    );
+                }
+            )
+            ->orderByRaw('due_date IS NULL')
+            ->orderBy('due_date')
+            ->paginate(
+                perPage: min(
+                    $request->integer(
+                        'per_page',
+                        10
+                    ),
+                    50
+                )
+            )
+            ->withQueryString();
+
+        return TaskResource::collection($tasks);
+    }
+
+    private function validateAssigneeForTargetRole(
+        Project $project,
+        mixed $assignedTo,
+        string $targetRole
+    ): User {
+        if ($assignedTo === null) {
+            throw ValidationException::withMessages([
+                'assigned_to' => [
+                    'Please select an assignee.',
+                ],
+            ]);
+        }
+
+        $user = User::query()
+            ->with('roles')
+            ->findOrFail((int) $assignedTo);
+
+        if ($user->status !== 'active') {
+            throw ValidationException::withMessages([
+                'assigned_to' => [
+                    'The selected user is inactive.',
+                ],
+            ]);
+        }
+
+        if ($targetRole === 'project-manager') {
+            if (! $user->hasRole('project-manager')) {
+                throw ValidationException::withMessages([
+                    'assigned_to' => [
+                        'Administrator tasks can only be assigned to a project manager.',
+                    ],
+                ]);
+            }
+
+            if ($project->manager_id !== $user->id) {
+                throw ValidationException::withMessages([
+                    'assigned_to' => [
+                        'The task must be assigned to the selected project’s manager.',
+                    ],
+                ]);
+            }
+
+            return $user;
+        }
+
+        if (! $user->hasRole('team-member')) {
+            throw ValidationException::withMessages([
+                'assigned_to' => [
+                    'Manager-created tasks can only be assigned to team members.',
+                ],
+            ]);
+        }
+
+        $isProjectMember = $project
+            ->members()
+            ->where(
+                'users.id',
+                $user->id
+            )
+            ->exists();
+
+        if (! $isProjectMember) {
+            throw ValidationException::withMessages([
+                'assigned_to' => [
+                    'The selected user is not a member of this project.',
+                ],
+            ]);
+        }
+
+        return $user;
     }
 
     public function store(
@@ -156,20 +383,42 @@ class TaskController extends Controller
     ): JsonResponse {
         Gate::authorize('createTask', $project);
 
-        $assignedUser = $this->validateAssignee(
-            $project,
-            $request->validated('assigned_to')
-        );
+        $creator = $request->user();
+
+        if (
+            ! $creator->hasAnyRole([
+                'administrator',
+                'project-manager',
+            ])
+        ) {
+            abort(
+                403,
+                'You are not allowed to create tasks.'
+            );
+        }
+
+        $targetRole = $creator->hasRole(
+            'administrator'
+        )
+            ? 'project-manager'
+            : 'team-member';
+
+        $assignedUser =
+            $this->validateAssigneeForTargetRole(
+                project: $project,
+                assignedTo: $request->validated(
+                    'assigned_to'
+                ),
+                targetRole: $targetRole
+            );
 
         $task = DB::transaction(function () use (
             $request,
             $project,
+            $creator,
+            $targetRole,
             $assignedUser
-        ) {
-            /*
-             * Locking the project row prevents two simultaneous
-             * requests from generating the same task number.
-             */
+        ): Task {
             Project::query()
                 ->whereKey($project->id)
                 ->lockForUpdate()
@@ -177,26 +426,33 @@ class TaskController extends Controller
 
             $nextTaskNumber = (
                 Task::query()
-                    ->withTrashed()
-                    ->where('project_id', $project->id)
-                    ->max('task_number') ?? 0
+                ->withTrashed()
+                ->where(
+                    'project_id',
+                    $project->id
+                )
+                ->max('task_number') ?? 0
             ) + 1;
 
             $task = $project->tasks()->create([
                 ...$request->validated(),
-                'assigned_to' => $assignedUser?->id,
+
+                'target_role' => $targetRole,
+                'assigned_to' => $assignedUser->id,
                 'task_number' => $nextTaskNumber,
-                'created_by' => $request->user()->id,
+                'created_by' => $creator->id,
             ]);
 
             ActivityLog::create([
-                'user_id' => $request->user()->id,
+                'user_id' => $creator->id,
                 'project_id' => $project->id,
                 'task_id' => $task->id,
                 'action' => 'task.created',
-                'description' => "Created task {$project->project_key}-{$task->task_number}",
+                'description' =>
+                "Created task {$project->project_key}-{$task->task_number} for {$assignedUser->name}.",
                 'properties' => [
-                    'assigned_to' => $task->assigned_to,
+                    'target_role' => $targetRole,
+                    'assigned_to' => $assignedUser->id,
                 ],
             ]);
 
@@ -205,7 +461,11 @@ class TaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Task created successfully.',
+            'message' =>
+            $targetRole === 'project-manager'
+                ? 'Manager task created successfully.'
+                : 'Team member task created successfully.',
+
             'data' => new TaskResource(
                 $task->load([
                     'project.manager',
@@ -242,12 +502,15 @@ class TaskController extends Controller
         $data = $request->validated();
 
         if (array_key_exists('assigned_to', $data)) {
-            $assignedUser = $this->validateAssignee(
-                $task->project,
-                $data['assigned_to']
-            );
+            $assignedUser =
+                $this->validateAssigneeForTargetRole(
+                    project: $task->project,
+                    assignedTo: $data['assigned_to'],
+                    targetRole: $task->target_role
+                );
 
-            $data['assigned_to'] = $assignedUser?->id;
+            $data['assigned_to'] =
+                $assignedUser->id;
         }
 
         DB::transaction(function () use (
@@ -352,11 +615,14 @@ class TaskController extends Controller
     ): JsonResponse {
         Gate::authorize('assign', $task);
 
-        $assignedUser = $this->validateAssignee(
-            $task->project,
-            $request->validated('assigned_to')
-        );
-
+        $assignedUser =
+            $this->validateAssigneeForTargetRole(
+                project: $task->project,
+                assignedTo: $request->validated(
+                    'assigned_to'
+                ),
+                targetRole: $task->target_role
+            );
         $oldAssignee = $task->assigned_to;
 
         $task->update([
@@ -414,15 +680,18 @@ class TaskController extends Controller
         ]);
     }
 
-    private function validateAssignee(
+    private function validateAssigneeForTaskType(
         Project $project,
-        mixed $assignedTo
+        mixed $assignedTo,
+        string $taskType
     ): ?User {
         if ($assignedTo === null) {
             return null;
         }
 
-        $user = User::findOrFail((int) $assignedTo);
+        $user = User::findOrFail(
+            (int) $assignedTo
+        );
 
         if ($user->status !== 'active') {
             throw ValidationException::withMessages([
@@ -432,15 +701,57 @@ class TaskController extends Controller
             ]);
         }
 
+        if ($taskType === 'main') {
+            if (
+                ! $user->hasRole(
+                    'project-manager'
+                )
+            ) {
+                throw ValidationException::withMessages([
+                    'assigned_to' => [
+                        'Main tasks can only be assigned to a project manager.',
+                    ],
+                ]);
+            }
+
+            if (
+                $project->manager_id !==
+                $user->id
+            ) {
+                throw ValidationException::withMessages([
+                    'assigned_to' => [
+                        'The task must be assigned to the manager of the selected project.',
+                    ],
+                ]);
+            }
+
+            return $user;
+        }
+
+        if (
+            ! $user->hasRole(
+                'team-member'
+            )
+        ) {
+            throw ValidationException::withMessages([
+                'assigned_to' => [
+                    'Subtasks can only be assigned to team members.',
+                ],
+            ]);
+        }
+
         $isProjectMember = $project
             ->members()
-            ->where('users.id', $user->id)
+            ->where(
+                'users.id',
+                $user->id
+            )
             ->exists();
 
         if (! $isProjectMember) {
             throw ValidationException::withMessages([
                 'assigned_to' => [
-                    'Tasks can only be assigned to project members.',
+                    'Subtasks can only be assigned to members of the selected project.',
                 ],
             ]);
         }

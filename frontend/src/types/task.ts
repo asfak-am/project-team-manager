@@ -14,6 +14,10 @@ export type TaskPriority =
   | "high"
   | "critical";
 
+export type TaskTargetRole =
+  | "project-manager"
+  | "team-member";
+
 export type TaskComment = {
   id: number;
   task_id: number;
@@ -30,6 +34,8 @@ export type Task = {
   id: number;
   project_id: number;
   task_number: number;
+
+  target_role: TaskTargetRole;
 
   title: string;
   description: string | null;
@@ -61,7 +67,9 @@ export type CreateTaskPayload = {
   description?: string | null;
   status: TaskStatus;
   priority: TaskPriority;
-  assigned_to?: number | null;
+
+  assigned_to: number;
+
   due_date?: string | null;
   estimated_hours?: number | null;
 };
@@ -71,7 +79,9 @@ export type UpdateTaskPayload = {
   description?: string | null;
   status: TaskStatus;
   priority: TaskPriority;
+
   assigned_to?: number | null;
+
   due_date?: string | null;
   estimated_hours?: number | null;
 };

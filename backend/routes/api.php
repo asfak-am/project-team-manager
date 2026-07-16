@@ -216,10 +216,19 @@ Route::middleware('auth:sanctum')->group(function () {
         'myTasks',
     ])->middleware('permission:tasks.view-assigned');
 
+    Route::get('/tasks/assigned-by-me', [
+        TaskController::class,
+        'assignedByMe',
+    ])->middleware(
+        'permission:tasks.view-all'
+    );
+
     Route::get('/tasks', [
         TaskController::class,
         'index',
-    ]);
+    ])->middleware(
+        'permission:tasks.view-all'
+    );
 
     Route::post('/projects/{project}/tasks', [
         TaskController::class,

@@ -134,24 +134,17 @@ export function EditTaskDialog({
         </DialogHeader>
 
         <TaskForm
-          key={task.id}
-          projects={
-            projectsQuery.data?.data ?? []
-          }
-          members={
-            membersQuery.data ?? []
-          }
-          defaultValues={defaultValues}
-          lockProject
-          isSubmitting={
-            updateTask.isPending
-          }
-          submitLabel="Save changes"
-          onSubmit={handleSubmit}
-          onCancel={() =>
-            onOpenChange(false)
-          }
-        />
+  key={task.id}
+  projects={projectsQuery.data?.data ?? []}
+  members={membersQuery.data ?? []}
+  defaultValues={defaultValues}
+  lockProject
+  targetRole={task.target_role}
+  isSubmitting={updateTask.isPending}
+  submitLabel="Save changes"
+  onSubmit={handleSubmit}
+  onCancel={() => onOpenChange(false)}
+/>
       </DialogContent>
     </Dialog>
   );

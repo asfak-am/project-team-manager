@@ -74,6 +74,10 @@ export default function TasksPage() {
         "tasks.delete"
     );
 
+    const canUpdateStatus = hasPermission(
+        "tasks.update-status"
+    );
+
     function closeAction(): void {
         setAction(null);
         setSelectedTask(null);
@@ -89,11 +93,12 @@ export default function TasksPage() {
         setAction("delete");
     }
 
+
     return (
         <div className="space-y-6">
             <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                                        <h2 className="font-heading text-2xl font-bold tracking-tight">
+                    <h2 className="font-heading text-2xl font-bold tracking-tight">
                         Tasks
                     </h2>
 
@@ -232,6 +237,7 @@ export default function TasksPage() {
                                     onDelete={openDelete}
                                     canUpdate={canUpdate}
                                     canDelete={canDelete}
+                                    canUpdateStatus={canUpdateStatus}
                                 />
                             )
                         )}

@@ -102,11 +102,6 @@ export function TopNavbar() {
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background px-4">
       <SidebarTrigger className="shrink-0" />
 
-      <Separator
-        orientation="vertical"
-        className="h-5"
-      />
-
       <div className="min-w-0 flex-1">
         <h1 className="truncate text-lg font-semibold">
           {getPageTitle(pathname)}

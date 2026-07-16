@@ -77,6 +77,7 @@ class RolePermissionSeeder extends Seeder
             'projects.delete',
             'projects.manage-members',
 
+            'tasks.view-all',
             'tasks.view-assigned',
             'tasks.create',
             'tasks.update',
@@ -96,7 +97,6 @@ class RolePermissionSeeder extends Seeder
             'comments.create',
             'activity.view',
         ]);
-
         app(PermissionRegistrar::class)
             ->forgetCachedPermissions();
     }

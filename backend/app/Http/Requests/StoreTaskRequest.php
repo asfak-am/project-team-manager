@@ -17,6 +17,7 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
+
             'title' => [
                 'required',
                 'string',
@@ -56,6 +57,7 @@ class StoreTaskRequest extends FormRequest
                 'min:0',
                 'max:9999.99',
             ],
+
         ];
     }
 }

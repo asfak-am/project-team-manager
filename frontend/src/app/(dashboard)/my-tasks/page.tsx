@@ -24,7 +24,7 @@ import { DeleteTaskDialog } from "@/components/tasks/delete-task-dialog";
 import { EditTaskDialog } from "@/components/tasks/edit-task-dialog";
 
 export default function MyTasksPage() {
- 
+
   const [search, setSearch] =
     useState("");
 
@@ -56,9 +56,9 @@ export default function MyTasksPage() {
     per_page: 50,
   });
 
-   const { hasPermission } = useAuth();
+  const { hasPermission } = useAuth();
 
-    const canUpdate = hasPermission(
+  const canUpdate = hasPermission(
     "tasks.update"
   );
 
@@ -66,12 +66,16 @@ export default function MyTasksPage() {
     "tasks.delete"
   );
 
+  const canUpdateStatus = hasPermission(
+    "tasks.update-status"
+  );
+
 
 
   return (
     <div className="space-y-6">
       <header>
-                <h2 className="font-heading text-2xl font-bold tracking-tight">
+        <h2 className="font-heading text-2xl font-bold tracking-tight">
           My Tasks
         </h2>
 
@@ -99,8 +103,8 @@ export default function MyTasksPage() {
           onValueChange={(value) =>
             setStatus(
               (value ?? "all") as
-                | TaskStatus
-                | "all"
+              | TaskStatus
+              | "all"
             )
           }
         >
@@ -144,8 +148,8 @@ export default function MyTasksPage() {
           onValueChange={(value) =>
             setPriority(
               (value ?? "all") as
-                | TaskPriority
-                | "all"
+              | TaskPriority
+              | "all"
             )
           }
         >
@@ -209,6 +213,7 @@ export default function MyTasksPage() {
                 }}
                 canUpdate={canUpdate}
                 canDelete={canDelete}
+                canUpdateStatus={canUpdateStatus}
               />
             )
           )}

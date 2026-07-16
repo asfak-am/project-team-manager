@@ -21,6 +21,7 @@ class TaskResource extends JsonResource
             ),
 
             'task_number' => $this->task_number,
+            'target_role' => $this->target_role,
             'title' => $this->title,
             'description' => $this->description,
             'status' => $this->status->value,

@@ -23,71 +23,112 @@ class DemoDataSeeder extends Seeder
             */
 
             $admin = User::updateOrCreate(
-                ['email' => 'admin@teamflow.test'],
+                [
+                    'email' => 'admin@teamflow.test',
+                ],
                 [
                     'name' => 'System Administrator',
-                    'password' => Hash::make('Password123!'),
+                    'password' => Hash::make(
+                        'Password123!'
+                    ),
                     'status' => 'active',
-                    'avatar' => null,
+                    'avatar_path' => null,
                 ]
             );
 
             $managerOne = User::updateOrCreate(
-                ['email' => 'manager@teamflow.test'],
+                [
+                    'email' => 'manager@teamflow.test',
+                ],
                 [
                     'name' => 'Project Manager One',
-                    'password' => Hash::make('Password123!'),
+                    'password' => Hash::make(
+                        'Password123!'
+                    ),
                     'status' => 'active',
-                    'avatar' => null,
+                    'avatar_path' => null,
                 ]
             );
 
             $managerTwo = User::updateOrCreate(
-                ['email' => 'manager2@teamflow.test'],
+                [
+                    'email' => 'manager2@teamflow.test',
+                ],
                 [
                     'name' => 'Project Manager Two',
-                    'password' => Hash::make('Password123!'),
+                    'password' => Hash::make(
+                        'Password123!'
+                    ),
                     'status' => 'active',
-                    'avatar' => null,
+                    'avatar_path' => null,
                 ]
             );
 
             $memberOne = User::updateOrCreate(
-                ['email' => 'member@teamflow.test'],
                 [
-                    'name' => 'Team Member One',
-                    'password' => Hash::make('Password123!'),
+                    'email' => 'member@teamflow.test',
+                ],
+                [
+                    'name' => 'Frontend Developer',
+                    'password' => Hash::make(
+                        'Password123!'
+                    ),
                     'status' => 'active',
-                    'avatar' => null,
+                    'avatar_path' => null,
                 ]
             );
 
             $memberTwo = User::updateOrCreate(
-                ['email' => 'member2@teamflow.test'],
                 [
-                    'name' => 'Team Member Two',
-                    'password' => Hash::make('Password123!'),
+                    'email' => 'member2@teamflow.test',
+                ],
+                [
+                    'name' => 'Backend Developer',
+                    'password' => Hash::make(
+                        'Password123!'
+                    ),
                     'status' => 'active',
-                    'avatar' => null,
+                    'avatar_path' => null,
                 ]
             );
 
             $memberThree = User::updateOrCreate(
-                ['email' => 'member3@teamflow.test'],
                 [
-                    'name' => 'Team Member Three',
-                    'password' => Hash::make('Password123!'),
+                    'email' => 'member3@teamflow.test',
+                ],
+                [
+                    'name' => 'UI UX Designer',
+                    'password' => Hash::make(
+                        'Password123!'
+                    ),
                     'status' => 'active',
-                    'avatar' => null,
+                    'avatar_path' => null,
                 ]
             );
 
-            $admin->syncRoles(['administrator']);
-            $managerOne->syncRoles(['project-manager']);
-            $managerTwo->syncRoles(['project-manager']);
-            $memberOne->syncRoles(['team-member']);
-            $memberTwo->syncRoles(['team-member']);
-            $memberThree->syncRoles(['team-member']);
+            $admin->syncRoles([
+                'administrator',
+            ]);
+
+            $managerOne->syncRoles([
+                'project-manager',
+            ]);
+
+            $managerTwo->syncRoles([
+                'project-manager',
+            ]);
+
+            $memberOne->syncRoles([
+                'team-member',
+            ]);
+
+            $memberTwo->syncRoles([
+                'team-member',
+            ]);
+
+            $memberThree->syncRoles([
+                'team-member',
+            ]);
 
             /*
             |--------------------------------------------------------------------------
@@ -96,30 +137,45 @@ class DemoDataSeeder extends Seeder
             */
 
             $projectOne = Project::updateOrCreate(
-                ['project_key' => 'TF'],
+                [
+                    'project_key' => 'TF',
+                ],
                 [
                     'name' => 'TeamFlow Platform',
-                    'description' => 'Project and team task management platform for the internship assignment.',
+                    'description' =>
+                        'Project and team task management platform developed for the full-stack internship assessment.',
                     'manager_id' => $managerOne->id,
                     'status' => 'active',
                     'priority' => 'critical',
-                    'start_date' => now()->subDays(10)->toDateString(),
-                    'due_date' => now()->addDays(20)->toDateString(),
+                    'start_date' => now()
+                        ->subDays(14)
+                        ->toDateString(),
+                    'due_date' => now()
+                        ->addDays(25)
+                        ->toDateString(),
                     'completed_at' => null,
                     'created_by' => $admin->id,
                 ]
             );
 
             $projectTwo = Project::updateOrCreate(
-                ['project_key' => 'WEB'],
                 [
-                    'name' => 'Corporate Website Redesign',
-                    'description' => 'A responsive redesign project for a business website.',
+                    'project_key' => 'WEB',
+                ],
+                [
+                    'name' =>
+                        'Corporate Website Redesign',
+                    'description' =>
+                        'Redesign and rebuild the company website with a responsive and conversion-focused interface.',
                     'manager_id' => $managerTwo->id,
                     'status' => 'planning',
                     'priority' => 'high',
-                    'start_date' => now()->subDays(3)->toDateString(),
-                    'due_date' => now()->addDays(30)->toDateString(),
+                    'start_date' => now()
+                        ->subDays(5)
+                        ->toDateString(),
+                    'due_date' => now()
+                        ->addDays(35)
+                        ->toDateString(),
                     'completed_at' => null,
                     'created_by' => $admin->id,
                 ]
@@ -133,190 +189,374 @@ class DemoDataSeeder extends Seeder
 
             $projectOne->members()->sync([
                 $managerOne->id => [
-                    'joined_at' => now()->subDays(10),
+                    'joined_at' => now()
+                        ->subDays(14),
                 ],
                 $memberOne->id => [
-                    'joined_at' => now()->subDays(9),
+                    'joined_at' => now()
+                        ->subDays(13),
                 ],
                 $memberTwo->id => [
-                    'joined_at' => now()->subDays(8),
+                    'joined_at' => now()
+                        ->subDays(12),
                 ],
             ]);
 
             $projectTwo->members()->sync([
                 $managerTwo->id => [
-                    'joined_at' => now()->subDays(3),
+                    'joined_at' => now()
+                        ->subDays(5),
                 ],
-                $memberTwo->id => [
-                    'joined_at' => now()->subDays(2),
+                $memberOne->id => [
+                    'joined_at' => now()
+                        ->subDays(4),
                 ],
                 $memberThree->id => [
-                    'joined_at' => now()->subDay(),
+                    'joined_at' => now()
+                        ->subDays(3),
                 ],
             ]);
 
             /*
             |--------------------------------------------------------------------------
-            | Clear old project task demo data
+            | Clear Existing Demo Task Data
             |--------------------------------------------------------------------------
             |
-            | This makes the seeder repeatable without creating duplicates.
+            | This makes the seeder safe to execute repeatedly.
             |
             */
 
+            $projectIds = [
+                $projectOne->id,
+                $projectTwo->id,
+            ];
+
             TaskComment::query()
-                ->whereHas('task', function ($query) use ($projectOne, $projectTwo) {
-                    $query->whereIn('project_id', [
-                        $projectOne->id,
-                        $projectTwo->id,
-                    ]);
-                })
+                ->whereHas(
+                    'task',
+                    fn ($query) =>
+                        $query->whereIn(
+                            'project_id',
+                            $projectIds
+                        )
+                )
                 ->forceDelete();
 
             ActivityLog::query()
-                ->whereIn('project_id', [
-                    $projectOne->id,
-                    $projectTwo->id,
-                ])
+                ->whereIn(
+                    'project_id',
+                    $projectIds
+                )
                 ->delete();
 
             Task::withTrashed()
-                ->whereIn('project_id', [
-                    $projectOne->id,
-                    $projectTwo->id,
-                ])
+                ->whereIn(
+                    'project_id',
+                    $projectIds
+                )
                 ->forceDelete();
 
             /*
             |--------------------------------------------------------------------------
-            | Project One Tasks
+            | Project One: Administrator → Manager Tasks
             |--------------------------------------------------------------------------
+            |
+            | These are management-level tasks.
+            | Team members must not be able to see these tasks.
+            |
             */
 
-            $taskOne = Task::create([
+            $managerTaskOne = Task::create([
                 'project_id' => $projectOne->id,
                 'task_number' => 1,
-                'title' => 'Design database schema',
-                'description' => 'Create tables, keys and relationships for the platform.',
+                'target_role' => 'project-manager',
+                'title' =>
+                    'Prepare TeamFlow implementation plan',
+                'description' =>
+                    'Prepare the project phases, team responsibilities, delivery milestones and technical implementation plan.',
                 'status' => 'completed',
                 'priority' => 'critical',
-                'assigned_to' => $memberOne->id,
-                'created_by' => $managerOne->id,
-                'due_date' => now()->subDays(6)->toDateString(),
-                'started_at' => now()->subDays(9),
-                'completed_at' => now()->subDays(7),
+                'assigned_to' => $managerOne->id,
+                'created_by' => $admin->id,
+                'due_date' => now()
+                    ->subDays(8)
+                    ->toDateString(),
+                'started_at' => now()
+                    ->subDays(13),
+                'completed_at' => now()
+                    ->subDays(9),
                 'estimated_hours' => 6,
             ]);
 
-            $taskTwo = Task::create([
+            $managerTaskTwo = Task::create([
                 'project_id' => $projectOne->id,
                 'task_number' => 2,
-                'title' => 'Build authentication API',
-                'description' => 'Implement Laravel Sanctum login, logout and current-user endpoints.',
+                'target_role' => 'project-manager',
+                'title' =>
+                    'Coordinate backend and frontend delivery',
+                'description' =>
+                    'Coordinate the Laravel API and Next.js frontend implementation and ensure all modules follow the approved requirements.',
+                'status' => 'in_progress',
+                'priority' => 'critical',
+                'assigned_to' => $managerOne->id,
+                'created_by' => $admin->id,
+                'due_date' => now()
+                    ->addDays(7)
+                    ->toDateString(),
+                'started_at' => now()
+                    ->subDays(4),
+                'completed_at' => null,
+                'estimated_hours' => 12,
+            ]);
+
+            $managerTaskThree = Task::create([
+                'project_id' => $projectOne->id,
+                'task_number' => 3,
+                'target_role' => 'project-manager',
+                'title' =>
+                    'Complete final quality review',
+                'description' =>
+                    'Review the completed functionality, documentation, permissions and deployment readiness before submission.',
+                'status' => 'todo',
+                'priority' => 'high',
+                'assigned_to' => $managerOne->id,
+                'created_by' => $admin->id,
+                'due_date' => now()
+                    ->addDays(18)
+                    ->toDateString(),
+                'started_at' => null,
+                'completed_at' => null,
+                'estimated_hours' => 8,
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Project One: Manager → Member Tasks
+            |--------------------------------------------------------------------------
+            */
+
+            $memberTaskOne = Task::create([
+                'project_id' => $projectOne->id,
+                'task_number' => 4,
+                'target_role' => 'team-member',
+                'title' =>
+                    'Build authentication and authorization API',
+                'description' =>
+                    'Implement Sanctum authentication, CSRF protection, role permissions and protected API routes.',
+                'status' => 'completed',
+                'priority' => 'critical',
+                'assigned_to' => $memberTwo->id,
+                'created_by' => $managerOne->id,
+                'due_date' => now()
+                    ->subDays(5)
+                    ->toDateString(),
+                'started_at' => now()
+                    ->subDays(11),
+                'completed_at' => now()
+                    ->subDays(6),
+                'estimated_hours' => 12,
+            ]);
+
+            $memberTaskTwo = Task::create([
+                'project_id' => $projectOne->id,
+                'task_number' => 5,
+                'target_role' => 'team-member',
+                'title' =>
+                    'Develop responsive authentication interface',
+                'description' =>
+                    'Build the TeamFlow login page and connect it to the Laravel authentication API.',
                 'status' => 'completed',
                 'priority' => 'high',
                 'assigned_to' => $memberOne->id,
                 'created_by' => $managerOne->id,
-                'due_date' => now()->subDays(2)->toDateString(),
-                'started_at' => now()->subDays(6),
-                'completed_at' => now()->subDays(3),
+                'due_date' => now()
+                    ->subDays(2)
+                    ->toDateString(),
+                'started_at' => now()
+                    ->subDays(7),
+                'completed_at' => now()
+                    ->subDays(3),
                 'estimated_hours' => 8,
             ]);
 
-            $taskThree = Task::create([
+            $memberTaskThree = Task::create([
                 'project_id' => $projectOne->id,
-                'task_number' => 3,
-                'title' => 'Create Next.js login page',
-                'description' => 'Build the responsive login screen and connect it to the Laravel API.',
-                'status' => 'in_progress',
+                'task_number' => 6,
+                'target_role' => 'team-member',
+                'title' =>
+                    'Implement project and member management API',
+                'description' =>
+                    'Create project CRUD endpoints, Trash functionality and project member assignment endpoints.',
+                'status' => 'review',
                 'priority' => 'high',
                 'assigned_to' => $memberTwo->id,
                 'created_by' => $managerOne->id,
-                'due_date' => now()->addDays(2)->toDateString(),
-                'started_at' => now()->subDay(),
+                'due_date' => now()
+                    ->addDay()
+                    ->toDateString(),
+                'started_at' => now()
+                    ->subDays(5),
+                'completed_at' => null,
+                'estimated_hours' => 10,
+            ]);
+
+            $memberTaskFour = Task::create([
+                'project_id' => $projectOne->id,
+                'task_number' => 7,
+                'target_role' => 'team-member',
+                'title' =>
+                    'Build dashboard and project pages',
+                'description' =>
+                    'Implement the responsive dashboard, project list, project details and member management interfaces.',
+                'status' => 'in_progress',
+                'priority' => 'high',
+                'assigned_to' => $memberOne->id,
+                'created_by' => $managerOne->id,
+                'due_date' => now()
+                    ->addDays(4)
+                    ->toDateString(),
+                'started_at' => now()
+                    ->subDays(2),
+                'completed_at' => null,
+                'estimated_hours' => 12,
+            ]);
+
+            $memberTaskFive = Task::create([
+                'project_id' => $projectOne->id,
+                'task_number' => 8,
+                'target_role' => 'team-member',
+                'title' =>
+                    'Prepare API and technical documentation',
+                'description' =>
+                    'Prepare Postman documentation, diagrams, README setup instructions and the feature completion report.',
+                'status' => 'todo',
+                'priority' => 'medium',
+                'assigned_to' => $memberTwo->id,
+                'created_by' => $managerOne->id,
+                'due_date' => now()
+                    ->addDays(10)
+                    ->toDateString(),
+                'started_at' => null,
                 'completed_at' => null,
                 'estimated_hours' => 7,
             ]);
 
-            $taskFour = Task::create([
-                'project_id' => $projectOne->id,
-                'task_number' => 4,
-                'title' => 'Prepare API documentation',
-                'description' => 'Document all endpoints in Postman with examples and permissions.',
-                'status' => 'review',
-                'priority' => 'medium',
-                'assigned_to' => $memberTwo->id,
-                'created_by' => $managerOne->id,
-                'due_date' => now()->subDay()->toDateString(),
-                'started_at' => now()->subDays(4),
-                'completed_at' => null,
-                'estimated_hours' => 4,
+            /*
+            |--------------------------------------------------------------------------
+            | Project Two: Administrator → Manager Tasks
+            |--------------------------------------------------------------------------
+            */
+
+            $managerTaskFour = Task::create([
+                'project_id' => $projectTwo->id,
+                'task_number' => 1,
+                'target_role' => 'project-manager',
+                'title' =>
+                    'Prepare website redesign strategy',
+                'description' =>
+                    'Define the website redesign goals, content hierarchy, technical approach and implementation milestones.',
+                'status' => 'completed',
+                'priority' => 'high',
+                'assigned_to' => $managerTwo->id,
+                'created_by' => $admin->id,
+                'due_date' => now()
+                    ->subDay()
+                    ->toDateString(),
+                'started_at' => now()
+                    ->subDays(5),
+                'completed_at' => now()
+                    ->subDays(2),
+                'estimated_hours' => 5,
             ]);
 
-            $taskFive = Task::create([
-                'project_id' => $projectOne->id,
-                'task_number' => 5,
-                'title' => 'Build dashboard statistics',
-                'description' => 'Create role-based dashboard cards and recent activity sections.',
-                'status' => 'todo',
-                'priority' => 'critical',
-                'assigned_to' => $memberOne->id,
-                'created_by' => $managerOne->id,
-                'due_date' => now()->addDays(5)->toDateString(),
-                'started_at' => null,
+            $managerTaskFive = Task::create([
+                'project_id' => $projectTwo->id,
+                'task_number' => 2,
+                'target_role' => 'project-manager',
+                'title' =>
+                    'Manage design and development delivery',
+                'description' =>
+                    'Coordinate design approval, frontend implementation and responsive testing for the corporate website.',
+                'status' => 'in_progress',
+                'priority' => 'high',
+                'assigned_to' => $managerTwo->id,
+                'created_by' => $admin->id,
+                'due_date' => now()
+                    ->addDays(14)
+                    ->toDateString(),
+                'started_at' => now()
+                    ->subDays(2),
                 'completed_at' => null,
-                'estimated_hours' => 6,
+                'estimated_hours' => 10,
             ]);
 
             /*
             |--------------------------------------------------------------------------
-            | Project Two Tasks
+            | Project Two: Manager → Member Tasks
             |--------------------------------------------------------------------------
             */
 
-            $taskSix = Task::create([
+            $memberTaskSix = Task::create([
                 'project_id' => $projectTwo->id,
-                'task_number' => 1,
-                'title' => 'Create homepage wireframe',
-                'description' => 'Prepare a responsive homepage structure and content hierarchy.',
+                'task_number' => 3,
+                'target_role' => 'team-member',
+                'title' =>
+                    'Create homepage UI design',
+                'description' =>
+                    'Prepare the homepage visual design, layout system, typography and responsive component specifications.',
                 'status' => 'completed',
+                'priority' => 'high',
+                'assigned_to' => $memberThree->id,
+                'created_by' => $managerTwo->id,
+                'due_date' => now()
+                    ->subDay()
+                    ->toDateString(),
+                'started_at' => now()
+                    ->subDays(4),
+                'completed_at' => now()
+                    ->subDays(2),
+                'estimated_hours' => 6,
+            ]);
+
+            $memberTaskSeven = Task::create([
+                'project_id' => $projectTwo->id,
+                'task_number' => 4,
+                'target_role' => 'team-member',
+                'title' =>
+                    'Develop responsive homepage',
+                'description' =>
+                    'Implement the approved homepage design using reusable and responsive frontend components.',
+                'status' => 'in_progress',
+                'priority' => 'high',
+                'assigned_to' => $memberOne->id,
+                'created_by' => $managerTwo->id,
+                'due_date' => now()
+                    ->addDays(5)
+                    ->toDateString(),
+                'started_at' => now()
+                    ->subDay(),
+                'completed_at' => null,
+                'estimated_hours' => 9,
+            ]);
+
+            $memberTaskEight = Task::create([
+                'project_id' => $projectTwo->id,
+                'task_number' => 5,
+                'target_role' => 'team-member',
+                'title' =>
+                    'Complete mobile usability testing',
+                'description' =>
+                    'Test the website on mobile, tablet and desktop screen sizes and document all usability issues.',
+                'status' => 'todo',
                 'priority' => 'medium',
                 'assigned_to' => $memberThree->id,
                 'created_by' => $managerTwo->id,
-                'due_date' => now()->subDay()->toDateString(),
-                'started_at' => now()->subDays(3),
-                'completed_at' => now()->subDays(2),
-                'estimated_hours' => 4,
-            ]);
-
-            $taskSeven = Task::create([
-                'project_id' => $projectTwo->id,
-                'task_number' => 2,
-                'title' => 'Develop services section',
-                'description' => 'Build the responsive services section with reusable components.',
-                'status' => 'in_progress',
-                'priority' => 'high',
-                'assigned_to' => $memberTwo->id,
-                'created_by' => $managerTwo->id,
-                'due_date' => now()->subDays(2)->toDateString(),
-                'started_at' => now()->subDays(3),
-                'completed_at' => null,
-                'estimated_hours' => 5,
-            ]);
-
-            $taskEight = Task::create([
-                'project_id' => $projectTwo->id,
-                'task_number' => 3,
-                'title' => 'Test mobile responsiveness',
-                'description' => 'Verify the website layout on mobile, tablet and desktop.',
-                'status' => 'todo',
-                'priority' => 'low',
-                'assigned_to' => $memberThree->id,
-                'created_by' => $managerTwo->id,
-                'due_date' => now()->addDays(10)->toDateString(),
+                'due_date' => now()
+                    ->addDays(12)
+                    ->toDateString(),
                 'started_at' => null,
                 'completed_at' => null,
-                'estimated_hours' => 3,
+                'estimated_hours' => 5,
             ]);
 
             /*
@@ -326,27 +566,45 @@ class DemoDataSeeder extends Seeder
             */
 
             TaskComment::create([
-                'task_id' => $taskThree->id,
-                'user_id' => $memberTwo->id,
-                'comment' => 'The login layout is complete. I am now connecting the form to the API.',
-            ]);
-
-            TaskComment::create([
-                'task_id' => $taskThree->id,
+                'task_id' => $managerTaskTwo->id,
                 'user_id' => $managerOne->id,
-                'comment' => 'Please also add validation messages and a loading state.',
+                'comment' =>
+                    'The backend and frontend teams are currently working on their assigned modules.',
             ]);
 
             TaskComment::create([
-                'task_id' => $taskFour->id,
+                'task_id' => $managerTaskTwo->id,
+                'user_id' => $admin->id,
+                'comment' =>
+                    'Please ensure that role restrictions are tested before the final quality review.',
+            ]);
+
+            TaskComment::create([
+                'task_id' => $memberTaskThree->id,
                 'user_id' => $memberTwo->id,
-                'comment' => 'All task and project endpoints have been tested in Postman.',
+                'comment' =>
+                    'Project CRUD and member management APIs are complete and ready for review.',
             ]);
 
             TaskComment::create([
-                'task_id' => $taskSeven->id,
+                'task_id' => $memberTaskThree->id,
+                'user_id' => $managerOne->id,
+                'comment' =>
+                    'Please verify the project Trash restore and permanent delete operations.',
+            ]);
+
+            TaskComment::create([
+                'task_id' => $memberTaskFour->id,
+                'user_id' => $memberOne->id,
+                'comment' =>
+                    'The dashboard and project list are complete. I am now working on the project details page.',
+            ]);
+
+            TaskComment::create([
+                'task_id' => $memberTaskSeven->id,
                 'user_id' => $managerTwo->id,
-                'comment' => 'The task is overdue. Please prioritize the final responsive adjustments.',
+                'comment' =>
+                    'Please ensure the homepage matches the approved mobile design.',
             ]);
 
             /*
@@ -361,46 +619,91 @@ class DemoDataSeeder extends Seeder
                     'project_id' => $projectOne->id,
                     'task_id' => null,
                     'action' => 'project.created',
-                    'description' => 'Created project TF.',
+                    'description' =>
+                        'Created TeamFlow Platform project.',
                     'properties' => [
-                        'project_name' => $projectOne->name,
+                        'project_key' =>
+                            $projectOne->project_key,
+                        'manager_id' =>
+                            $managerOne->id,
+                    ],
+                ],
+                [
+                    'user_id' => $admin->id,
+                    'project_id' => $projectOne->id,
+                    'task_id' => $managerTaskTwo->id,
+                    'action' => 'task.created',
+                    'description' =>
+                        'Assigned coordination task to Project Manager One.',
+                    'properties' => [
+                        'target_role' =>
+                            'project-manager',
+                        'assigned_to' =>
+                            $managerOne->id,
                     ],
                 ],
                 [
                     'user_id' => $managerOne->id,
                     'project_id' => $projectOne->id,
-                    'task_id' => $taskThree->id,
+                    'task_id' => $memberTaskFour->id,
                     'action' => 'task.created',
-                    'description' => 'Created task TF-3.',
+                    'description' =>
+                        'Assigned dashboard and project page task to Frontend Developer.',
                     'properties' => [
-                        'assigned_to' => $memberTwo->id,
+                        'target_role' =>
+                            'team-member',
+                        'assigned_to' =>
+                            $memberOne->id,
                     ],
                 ],
                 [
-                    'user_id' => $memberTwo->id,
+                    'user_id' => $memberOne->id,
                     'project_id' => $projectOne->id,
-                    'task_id' => $taskThree->id,
-                    'action' => 'task.status_updated',
-                    'description' => 'Changed task status from todo to in_progress.',
+                    'task_id' => $memberTaskFour->id,
+                    'action' =>
+                        'task.status_updated',
+                    'description' =>
+                        'Changed task status from todo to in_progress.',
                     'properties' => [
                         'old_status' => 'todo',
-                        'new_status' => 'in_progress',
+                        'new_status' =>
+                            'in_progress',
                     ],
                 ],
                 [
                     'user_id' => $managerTwo->id,
                     'project_id' => $projectTwo->id,
-                    'task_id' => $taskSeven->id,
-                    'action' => 'task.updated',
-                    'description' => 'Updated task due date and priority.',
+                    'task_id' => $memberTaskSeven->id,
+                    'action' => 'task.created',
+                    'description' =>
+                        'Assigned responsive homepage development to Frontend Developer.',
                     'properties' => [
-                        'priority' => 'high',
+                        'target_role' =>
+                            'team-member',
+                        'assigned_to' =>
+                            $memberOne->id,
+                    ],
+                ],
+                [
+                    'user_id' => $memberThree->id,
+                    'project_id' => $projectTwo->id,
+                    'task_id' => $memberTaskSix->id,
+                    'action' =>
+                        'task.status_updated',
+                    'description' =>
+                        'Changed homepage UI design task status from review to completed.',
+                    'properties' => [
+                        'old_status' => 'review',
+                        'new_status' =>
+                            'completed',
                     ],
                 ],
             ];
 
             foreach ($activities as $activity) {
-                ActivityLog::create($activity);
+                ActivityLog::create(
+                    $activity
+                );
             }
         });
     }
